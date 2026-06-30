@@ -1,0 +1,45 @@
+{
+  "name": "@letterblack/lbe-core",
+  "version": "1.3.35",
+  "description": "Local-first execution governance SDK for AI agents.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "types.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./cli": "./dist/cli.js"
+  },
+  "bin": {
+    "lbe": "dist/cli.js"
+  },
+  "files": [
+    "dist/",
+    "assets/",
+    "docs/decisions/*.md",
+    "types.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "pack": "npm pack",
+    "pack:check": "npm pack --dry-run"
+  },
+  "keywords": [
+    "ai-governance",
+    "execution-governance",
+    "ai-safety",
+    "agent-safety",
+    "policy-engine",
+    "audit-log",
+    "local-first"
+  ],
+  "author": "LetterBlack",
+  "license": "Proprietary",
+  "dependencies": {},
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
