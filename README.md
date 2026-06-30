@@ -1,5 +1,9 @@
 # @letterblack/lbe-core
 
+<p align="center">
+  <img src="assets/banner.png" alt="LBE Banner" width="100%" />
+</p>
+
 **LBE is a local execution-control layer for AI agents. It validates every proposed action against a local policy before your code executes it.**
 
 ---
