@@ -1,12 +1,10 @@
 # @letterblack/lbe-core
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/@letterblack/lbe-core"><img alt="npm" src="https://img.shields.io/npm/v/@letterblack/lbe-core"></a>
-  <img alt="Node >=20.9" src="https://img.shields.io/badge/node-%3E%3D20.9-3f3f46">
-  <img alt="Local first" src="https://img.shields.io/badge/local--first-no%20cloud-111827">
-  <img alt="WASM runtime" src="https://img.shields.io/badge/runtime-WASM-5b5bd6">
-  <img alt="GitHub Actions" src="https://github.com/Letterblack0306/LetterBlack-Sentinel/actions/workflows/public-validate.yml/badge.svg">
-</p>
+[![npm](https://img.shields.io/npm/v/@letterblack/lbe-core)](https://www.npmjs.com/package/@letterblack/lbe-core)
+![Node >=20.9](https://img.shields.io/badge/node-%3E%3D20.9-3f3f46)
+![Local first](https://img.shields.io/badge/local--first-no%20cloud-111827)
+![WASM runtime](https://img.shields.io/badge/runtime-WASM-5b5bd6)
+![GitHub Actions](https://github.com/Letterblack0306/LetterBlack-Sentinel/actions/workflows/public-validate.yml/badge.svg)
 
 <p align="center">
   <img src="assets/runtime-boundary.svg" alt="LBE local runtime boundary" width="820">
