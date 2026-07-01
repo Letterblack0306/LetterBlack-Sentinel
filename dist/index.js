@@ -1,4 +1,4 @@
-// @letterblack/lbe-core v1.3.35
+// @letterblack/lbe-core v1.3.36
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';

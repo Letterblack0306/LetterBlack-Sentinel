@@ -1,2 +1,2 @@
-// @letterblack/lbe-core v1.3.35
+// @letterblack/lbe-core v1.3.36
 export function execute(input: string): string;
