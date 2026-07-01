@@ -1,144 +1,125 @@
-# @letterblack/lbe-core
-
-[![npm](https://img.shields.io/npm/v/@letterblack/lbe-core)](https://www.npmjs.com/package/@letterblack/lbe-core)
-![Node >=20.9](https://img.shields.io/badge/node-%3E%3D20.9-3f3f46)
-![Local first](https://img.shields.io/badge/local--first-no%20cloud-111827)
-![WASM runtime](https://img.shields.io/badge/runtime-WASM-5b5bd6)
-![GitHub Actions](https://github.com/Letterblack0306/LetterBlack-Sentinel/actions/workflows/public-validate.yml/badge.svg)
+# LetterBlack LBE
 
 <p align="center">
-  <img src="assets/runtime-boundary.svg" alt="LBE local runtime boundary" width="820">
+  <a href="https://www.npmjs.com/package/@letterblack/lbe-core"><img alt="npm" src="https://img.shields.io/npm/v/@letterblack/lbe-core?color=70F0C2&label=npm"></a>
+  <img alt="Node >=20.9" src="https://img.shields.io/badge/node-%3E%3D20.9-0F172A?labelColor=070A12">
+  <img alt="Local first" src="https://img.shields.io/badge/local--first-no%20cloud-70F0C2?labelColor=070A12">
+  <img alt="SDK + CLI" src="https://img.shields.io/badge/interface-SDK%20%2B%20CLI-8D7DFF?labelColor=070A12">
 </p>
 
 <p align="center">
-  <strong>Local execution-control for AI agents.</strong><br>
-  Validate file, shell, and state-changing actions before your host application executes them.
+  <img src="assets/lbe-github-hero.svg" alt="LetterBlack LBE local execution boundary" width="900">
 </p>
 
-<table>
-  <tr>
-    <td><strong>Block unsafe actions</strong><br>Validate proposed file and shell operations before execution.</td>
-    <td><strong>Keep policy local</strong><br>No cloud service, no daemon, no API key. Policy stays on the machine.</td>
-    <td><strong>Audit decisions</strong><br>Record allow/deny results in a local tamper-evident log.</td>
-  </tr>
-</table>
+<p align="center">
+  <strong>Local execution boundary for AI agents.</strong><br>
+  LBE helps your application validate agent actions before your host executes them.
+</p>
 
 ---
+
+## Install
+
+```bash
+npm install @letterblack/lbe-core
+```
+
+Requires Node.js `>= 20.9.0`.
 
 ## Quick start
 
 ```bash
-npm install @letterblack/lbe-core
-npx lbe init      # create lbe.policy.json in observer mode
-npx lbe status    # show current policy and workspace state
-npx lbe enforce   # switch to blocking mode when ready
+npx lbe init
+npx lbe status
+npx lbe scope
+npx lbe intent
+npx lbe proof
 ```
 
-Requires Node.js >= 20.9.0.
-
----
-
-## The problem
-
-AI agents write files, run shell commands, call APIs, and modify state. Most of the time they do the right thing. But they have no built-in execution boundary. When a model hallucinates a path, over-reaches its scope, or gets manipulated by injected instructions, there is nothing between the agent's decision and your filesystem.
-
-You can prompt the agent to be careful. You can review outputs manually. But neither of those is enforcement.
-
-LBE is enforcement. Every action the agent proposes is validated against a local policy before it runs. If the policy says no, the action does not execute — regardless of what the model decided.
-
----
-
-## Who this is for
-
-- **Developers building AI coding assistants** that write, move, or delete files on behalf of users
-- **Developers building automation tools** where an AI generates shell commands or file operations
-- **Teams integrating LLMs into existing applications** that need an audit trail and a hard execution boundary
-- **Anyone who wants to know exactly what an AI agent did** and be able to review it, not just trust it
-
-You do not need to be building a safety product. If your application lets an AI agent touch the filesystem or run commands, you need an execution boundary. LBE is that boundary.
-
----
-
-## Why local-first
-
-No cloud service. No daemon. No API key. The runtime is a verified WASM binary that runs in your process. Policy is a local JSON file. Evidence stays on your machine.
-
-This matters because:
-
-- It works offline and in airgapped environments
-- No external service can go down and break your enforcement
-- Sensitive file paths and workspace context never leave the machine
-- Latency is microseconds, not network round-trips
-- You own the policy — no vendor decides what is allowed
-
----
-
-## What it does
+Use this first flow:
 
 ```text
-Agent proposes an action
-        ↓
-LBE validates it against your policy
-        ↓
-allow / deny — structured result returned to your host
-        ↓
-Host executes only if LBE approved
-        ↓
-Audit entry written to a local hash-linked log
+Initialize LBE → check status → declare/inspect scope → track intent → verify proof
 ```
 
-Your code stays in control. LBE makes the allow/deny decision and hands it back. It does not execute on your behalf.
-
-If LBE denies an action, it records why. You can review the audit log, identify the denied or allowed action, and recover using your host application's own rollback flow.
-
 ---
 
-## How validation works
+## What LBE does
+
+LBE gives your host application a local decision boundary for AI-agent actions routed through it.
+
+When an agent proposes a file change, shell command, or state-changing action, your host can ask LBE first. LBE returns a structured result, and your host decides whether to execute, block, or report the issue.
 
 <p align="center">
-  <img src="assets/lbe-gates.png" alt="LBE validation gates" width="820">
+  <img src="assets/lbe-simple-flow.svg" alt="Agent proposes, host asks LBE, LBE returns a decision, host executes or blocks" width="900">
 </p>
 
-Every request LBE receives is checked for authenticity, timing, rate limits, replay protection, and policy rules. If any check fails, the request is denied and your execution layer never sees it.
+---
 
-A denied request returns a structured result with the stage that rejected it and the reason. Your host code decides what to do — log it, surface it to the user, or recover.
+## Why it is needed
+
+AI agents can be useful, but prompt-only control leaves gaps.
+
+| Gap | What can happen | How LBE helps |
+|---|---|---|
+| Scope drift | The agent edits files outside the task | Proof can report `CHANGED_OUTSIDE_SCOPE` |
+| Wrong target | The agent writes to the wrong path | Policy and scope can validate the proposed target |
+| Missing validation | The agent says work is done without checks | Proof can report `VALIDATION_MISSING` |
+| Hidden changes | Final files do not match the request | LBE records local evidence for review |
+| No boundary | The model decision goes straight to execution | Your host can ask LBE before acting |
+
+LBE makes agent work more explicit, scope-bound, auditable, and reviewable.
 
 ---
 
-## Use cases
+## Practical scenarios
 
-**AI coding assistant**
-The agent wants to write `output.js`. LBE checks: is this path inside the allowed workspace? Is the operation type permitted? Does the policy allow file writes for this actor? Only if all checks pass does your host write the file.
+<p align="center">
+  <img src="assets/lbe-scenarios.svg" alt="LBE scenarios: coding assistant, command validation, scope proof, audit review" width="900">
+</p>
 
-**Shell command gating**
-The agent proposes `rm -rf ./build`. Your policy allows `rm` inside `./build` but denies recursive deletes outside it. LBE returns deny before the command reaches the shell.
-
-**Scope enforcement**
-You want the agent to only touch files in `./generated/`. Write one policy rule. LBE denies every write outside that path, automatically, on every request, without you reviewing each one.
-
-**Audit evidence**
-Every routed allow/deny decision can be written to a local hash-linked audit log. The chain is tamper-evident — removing or modifying an entry breaks the chain and is detectable.
-
-**Observer mode for new projects**
-Not sure what your agent is doing? Start in observer mode. Every request is validated in the same decision format used for enforcement — but policy violations are not blocked. Watch the patterns. Write policy rules. Switch to enforce when you are confident.
-
----
-
-## CLI reference
-
-| Command | What it does |
+| Scenario | Example use |
 |---|---|
-| `npx lbe init` | Create `lbe.policy.json` in observer mode |
-| `npx lbe status` | Show policy mode, rules, and workspace state |
-| `npx lbe policy` | Print the current policy file |
-| `npx lbe observe` | Switch to advisory mode — logs but does not block |
-| `npx lbe enforce` | Switch to blocking mode — denies policy violations |
-| `npx lbe execute` | Validate a JSON proposal from stdin |
-| `npx lbe execute --input <file>` | Validate a JSON proposal from a file |
+| AI coding assistant | Limit a task to `src/**`, forbid `.env`, and require tests before accepting the work |
+| Command validation | Ask LBE before the host executes generated shell commands |
+| Scope proof | Check whether the final changes match the declared task scope |
+| Audit review | Keep local evidence for what was allowed, denied, incomplete, or outside scope |
 
 ---
 
-## Programmatic API
+## Common commands
+
+| Command | Purpose |
+|---|---|
+| `npx lbe init` | Initialize LBE for the current workspace |
+| `npx lbe status` | Show current workspace status |
+| `npx lbe scope` | Inspect scope state |
+| `npx lbe intent` | Inspect task intent state |
+| `npx lbe proof` | Show the latest proof result |
+| `npx lbe observe` | Use advisory mode |
+| `npx lbe enforce` | Use blocking policy mode for routed actions |
+| `npx lbe execute` | Validate a JSON proposal through the LBE boundary |
+
+---
+
+## Proof statuses users may see
+
+<p align="center">
+  <img src="assets/lbe-proof-status.svg" alt="Common LBE proof statuses" width="900">
+</p>
+
+| Result | Meaning |
+|---|---|
+| `CLEAN` | Work matches the declared scope |
+| `NO_SCOPE_FOUND` | No active scope was declared |
+| `NO_INTENT_FOUND` | No task intent was registered |
+| `CHANGED_OUTSIDE_SCOPE` | Files changed outside the allowed scope |
+| `VALIDATION_MISSING` | Required validation evidence is missing |
+| `PROOF_INCOMPLETE` | Proof cannot be completed yet |
+
+---
+
+## Minimal SDK usage
 
 ```js
 import { execute } from '@letterblack/lbe-core';
@@ -146,132 +127,62 @@ import { execute } from '@letterblack/lbe-core';
 const proposal = {
   version: '1.0',
   request_id: 'req-001',
-  timestamp: Math.floor(Date.now() / 1000),
-  actor: { id: 'agent:local', role: 'agent' },
   intent: {
-    type: 'command',
+    type: 'file',
     name: 'write_file',
-    payload: { target: 'output.js' }
-  },
-  context: { workspace: process.cwd() },
-  auth: { signature: '<host-signed>', token: '<unique-per-request>' }
+    payload: { target: 'src/output.js' }
+  }
 };
 
 const result = JSON.parse(execute(JSON.stringify(proposal)));
 
 if (result.decision === 'allow') {
-  // LBE approved — safe to execute
+  console.log('Approved by LBE');
 } else {
-  // LBE denied — result.error has the stage and reason
-  console.error(result.error.stage, result.error.message);
+  console.log('Not approved:', result.error || result);
 }
 ```
 
-`execute(input: string): string` — synchronous, accepts JSON, returns JSON. The WASM runtime owns all validation decisions.
-
-### Decision responses
-
-<table>
-  <tr>
-    <td><img src="assets/story-allow.png" alt="Allowed request flow" width="390"></td>
-    <td><img src="assets/story-deny.png" alt="Denied request flow" width="390"></td>
-  </tr>
-</table>
-
-Allowed:
-
-```json
-{
-  "ok": true,
-  "decision": "allow",
-  "request_id": "req-001",
-  "result": { "type": "allowed" }
-}
-```
-
-Denied:
-
-```json
-{
-  "ok": false,
-  "decision": "deny",
-  "request_id": "req-001",
-  "error": { "stage": "policy", "message": "rule:deny_outside_workspace" }
-}
-```
+Use the SDK when your application controls the action path and can ask LBE before execution.
 
 ---
 
-## Validating from the CLI
+## Honest boundary
 
-```bash
-# from a file
-npx lbe execute --input proposal.json
+LBE is strongest when your host routes agent actions through it.
 
-# from stdin
-cat proposal.json | npx lbe execute
-```
-
-Exit code `0` = allowed. Exit code `1` = denied. Exit code `2` = bad input.
-
----
-
-## Observer mode
-
-Not ready to block? Start here.
-
-`npx lbe init` creates the policy in observer mode. Every request is validated in the same decision format used for enforcement — but policy violations are not blocked. You see what the agent is doing before you write your first deny rule.
-
-```bash
-npx lbe init       # observer mode on by default
-npx lbe status     # confirm mode: observe
-npx lbe enforce    # block when ready
-npx lbe observe    # back to advisory any time
-```
-
----
-
-## What ships in this package
+| LBE is | LBE is not |
+|---|---|
+| A local decision boundary | An operating-system sandbox |
+| A scope and proof workflow | A global tool interceptor |
+| An SDK and CLI for host-controlled workflows | A hosted control plane |
+| A way to review routed agent work | A guarantee over tools that bypass it |
 
 ```text
-dist/index.js               WebAssembly runtime loader — exports execute()
-dist/cli.js                 CLI (npx lbe)
-dist/lbe_engine.wasm        Verified runtime binary
-dist/wasm.lock.json         Runtime integrity lock (SHA-256 of wasm binary)
-assets/lbe-gates.jpg        Gate sequence diagram
-assets/lbe-gates.png        Gate sequence diagram
-assets/story-allow.jpg      Approved-request flow
-assets/story-allow.png      Approved-request flow
-assets/story-deny.jpg       Blocked-request flow
-assets/story-deny.png       Blocked-request flow
-assets/runtime-boundary.svg Runtime boundary diagram
-types.d.ts                  TypeScript declarations
-LICENSE
+LBE governs actions routed through its SDK or CLI boundary.
+If another tool bypasses that boundary, LBE cannot govern that action unless the host environment routes it through LBE.
 ```
 
-At load time the runtime verifies `lbe_engine.wasm` against `wasm.lock.json`. A missing, modified, or swapped binary fails before any request is processed.
+---
 
-Source code, tests, keys, execution connectors, and workspace state are not included.
+## Documentation
+
+| Area | Where to look |
+|---|---|
+| Usage examples | `docs/` |
+| Product boundary decisions | `docs/decisions/` |
+| Security model and limits | `docs/` |
+| Package entrypoint | `dist/` in the published package |
+
+The README is intentionally human-facing. Deep runtime details belong in technical docs, not the front page.
 
 ---
 
-## What LBE does not do
+## License
 
-LBE is not a sandbox, container, or OS-level isolation layer. It controls only the actions that your host routes through it.
+Proprietary.
 
-- Does not provide kernel-level process isolation
-- Does not control network egress
-- Does not prevent the agent from calling external APIs directly
-- Does not provide multi-tenant separation
-- Does not run a hosted control plane
-
-If the agent calls the filesystem directly without going through your host code, LBE does not see it. LBE governs actions that are explicitly routed through the `execute()` boundary.
-
----
-
-## Limits
-
-- Central writes are best-effort
-- Local logs remain local
-- Non-inspectable targets may produce limited evidence
-- Per-process state resets on restart unless you configure a persistent path
+<p align="center">
+  <strong>LetterBlack LBE</strong><br>
+  Local execution governance for AI-agent workflows.
+</p>
