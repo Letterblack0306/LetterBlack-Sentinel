@@ -18,6 +18,26 @@
 
 LBE helps your application validate agent actions before your host executes them. It adds local proof, scope checking, and clearer visibility into what the agent was supposed to do versus what actually happened.
 
+## AI agents are getting stronger. Their execution layer is not.
+
+Today, most people judge AI agents by one thing: did it solve the task faster?
+
+That works while agents are weak.
+
+But agents already write files, run shell commands, control browsers, edit configs, and trigger workflows. Soon they will touch publishing, databases, deployments, credentials, and production systems.
+
+At that point, “the agent meant well” is not enough.
+
+LBE exists for the moment between an AI agent deciding what to do and the system actually doing it.
+
+It validates the action, checks the boundary, blocks unsafe execution, records proof, and makes the result auditable.
+
+Not another agent framework.  
+Not another chat UI.  
+Not another model wrapper.
+
+LBE is the local execution-control layer for AI agents before they touch real systems.
+
 <table>
   <tr>
     <td>
