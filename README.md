@@ -18,6 +18,16 @@
 
 LBE helps your application validate agent actions before your host executes them. It adds local proof, scope checking, and clearer visibility into what the agent was supposed to do versus what actually happened.
 
+<table>
+  <tr>
+    <td>
+      <strong>Beta status</strong><br>
+      LBE is currently in beta. The current public package provides a local SDK and CLI for validating host-routed AI-agent actions, checking scope, and producing local proof/audit evidence.<br><br>
+      Future releases will add stronger runtime execution control, including stricter file and shell routing, approval gates, rollback support, and deeper enforcement around agent-driven changes.
+    </td>
+  </tr>
+</table>
+
 <p align="center">
   <a href="#install-first-then-start-simple"><strong>Get started</strong></a>
   ·
