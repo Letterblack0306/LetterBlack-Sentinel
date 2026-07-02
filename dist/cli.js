@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// @letterblack/lbe-core v1.3.36
+// @letterblack/lbe-core v1.3.37
 import fs from 'node:fs';
 import path from 'node:path';
 import { execute } from './index.js';
