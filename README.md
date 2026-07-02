@@ -6,17 +6,18 @@
 
 [![npm](https://img.shields.io/npm/v/@letterblack/lbe-core)](https://www.npmjs.com/package/@letterblack/lbe-core)
 ![Node >=20.9](https://img.shields.io/badge/node-%3E%3D20.9-3f3f46)
-![Local first](https://img.shields.io/badge/local--first-no%20cloud-111827)
+![Execution local only](https://img.shields.io/badge/execution-local--only-111827)
 ![SDK + CLI](https://img.shields.io/badge/surface-SDK%20%2B%20CLI-0284c7)
+![Terminal first](https://img.shields.io/badge/product-terminal--first-7f1d1d)
 ![Scope-aware proof](https://img.shields.io/badge/proof-scope--aware-166534)
 ![GitHub Actions](https://github.com/Letterblack0306/LetterBlack-Sentinel/actions/workflows/public-validate.yml/badge.svg)
 
 <p align="center">
-  <strong>Local-first · SDK + CLI · Scope-aware proof</strong><br>
+  <strong>Local-first · Terminal-first · SDK + CLI · Scope-aware proof</strong><br>
   Local execution boundary for AI agents.
 </p>
 
-LBE helps your application validate agent actions before your host executes them. It adds local proof, scope checking, and clearer visibility into what the agent was supposed to do versus what actually happened.
+LBE helps your application validate agent actions before your host executes them. It adds local policy checks, scope-aware proof, audit visibility, and a terminal-first workflow for understanding what an agent was supposed to do versus what actually happened.
 
 ## AI agents are getting stronger. Their execution layer is not.
 
@@ -30,7 +31,7 @@ At that point, “the agent meant well” is not enough.
 
 LBE exists for the moment between an AI agent deciding what to do and the system actually doing it.
 
-It validates the action, checks the boundary, blocks unsafe execution, records proof, and makes the result auditable.
+It checks the action, validates the boundary, records proof, and gives the host a clearer decision before accepting or executing the work.
 
 Not another agent framework.  
 Not another chat UI.  
@@ -42,8 +43,9 @@ LBE is the local execution-control layer for AI agents before they touch real sy
   <tr>
     <td>
       <strong>Beta status</strong><br>
-      LBE is currently in beta. The current public package provides a local SDK and CLI for validating host-routed AI-agent actions, checking scope, and producing local proof/audit evidence.<br><br>
-      Future releases will add stronger runtime execution control, including stricter file and shell routing, approval gates, rollback support, and deeper enforcement around agent-driven changes.
+      LBE is currently in public beta. The current public package provides a local SDK and CLI for validating host-routed AI-agent actions, checking scope, and producing local proof/audit evidence.<br><br>
+      LBE is terminal-first. The product direction is a branded CLI/TUI experience rather than a required browser dashboard.<br><br>
+      An optional authenticated cloud connection is available for status, workspace connection, and proof/control-plane visibility. Execution remains local. LBE Cloud does not execute shell commands, mutate your filesystem, or provide a shared hosted execution workspace.
     </td>
   </tr>
 </table>
@@ -56,9 +58,9 @@ LBE is the local execution-control layer for AI agents before they touch real sy
   <a href="#technical-visuals"><strong>Technical visuals</strong></a>
 </p>
 
-| No cloud service | Local policy | Local proof | Human-readable workflow |
+| Terminal-first | Local policy | Local proof | Optional cloud status |
 |---|---|---|---|
-| Runs in your workspace | You own the rules | Evidence stays local | Results are readable |
+| CLI/TUI workflow | You own the rules | Evidence stays local | Cloud connects, local executes |
 
 ## How LBE fits into an agent workflow
 
@@ -97,6 +99,12 @@ npx lbe proof
 ```
 
 Start with `status`, `scope`, and `proof` before going deeper.
+
+## Terminal-first workflow
+
+Sentinel is designed to stay close to the workspace. The preferred product direction is a branded terminal experience: live API status, connected workspace state, proof views, policy checks, and selectable actions directly inside the terminal.
+
+A browser dashboard is not required for the current beta.
 
 ## Why LBE exists
 
@@ -224,9 +232,12 @@ For deeper reviewer context, see [Technical Visuals](https://github.com/Letterbl
 LBE is not a sandbox, container, or OS-level isolation layer. It controls only the actions that your host routes through it.
 
 - Does not provide kernel-level process isolation
-- Does not control network egress
-- Does not prevent the agent from calling external APIs directly
-- Does not provide multi-tenant separation
-- Does not run a hosted control plane
+- Does not control all network egress
+- Does not prevent an agent from calling external APIs directly
+- Does not provide public hosted shell execution
+- Does not provide public hosted filesystem mutation
+- Does not make LBE Cloud the owner of your workspace or execution path
 
-If the agent calls the filesystem directly without going through your host code, LBE does not see it. LBE governs actions that are explicitly routed through the LBE boundary.
+If an agent writes directly to the filesystem without going through your host/LBE boundary, LBE does not see that action.
+
+LBE governs actions explicitly routed through the LBE boundary.
