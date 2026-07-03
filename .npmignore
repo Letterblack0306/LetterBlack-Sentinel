@@ -1,0 +1,10 @@
+src/
+test/
+tests/
+scripts/
+archive/
+.github/
+keys/
+data/
+node_modules/
+*.map

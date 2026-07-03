@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   validate:
@@ -30,7 +31,95 @@ jobs:
             if (pkg.files && pkg.files.includes('.github/')) throw new Error('.github/ must not appear in npm files field');
           "
 
-      - name: Dry-run pack and check contents
+      - name: Repository allowlist check
+        shell: bash
+        run: |
+          set -euo pipefail
+          ALLOWED='^(.github|assets|dist|docs|\.npmignore|LICENSE|package\.json|README\.md|types\.d\.ts)
+
+          for entry in *; do
+            if ! echo "$entry" | grep -Eq "$ALLOWED"; then
+              echo "HARD STOP: disallowed top-level entry: $entry"
+              exit 1
+            fi
+          done
+          echo "Top-level allowlist check passed."
+
+      - name: Forbidden public-repo paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORBIDDEN="src scripts tests keys config data release-public release-exec .lbe .env package-lock.json"
+          for p in $FORBIDDEN; do
+            if [ -e "$p" ]; then
+              echo "HARD STOP: forbidden path exists in repo: $p"
+              exit 1
+            fi
+          done
+          echo "Forbidden path check passed."
+
+      - name: README forbidden-claim scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORBIDDEN=(
+            "LetterBlack-LBE-Core"
+            "private source repo"
+            "source-of-truth build system"
+            "Release Authority"
+            "release-authority"
+            "MAINHEAD_GUARD"
+            "NPM_TOKEN"
+            "GITHUB_TOKEN"
+            "secretKey"
+            "keyId"
+            "nonce"
+            "HMAC"
+            "Ed25519"
+            "signEd25519"
+            "internal adapter"
+            "gate pipeline"
+            "executeAdapter"
+            "evaluatePolicy"
+            "validateCommand"
+            "child_process"
+            "Used in production"
+            "After Effects"
+            "LBE Cloud"
+            "optional authenticated cloud connection"
+            "hosted execution workspace"
+            "cloud connection"
+          )
+          for pattern in "${FORBIDDEN[@]}"; do
+            if grep -qi "$pattern" README.md; then
+              echo "HARD STOP: README contains forbidden claim: $pattern"
+              exit 1
+            fi
+          done
+          echo "README forbidden-claim scan passed."
+
+      - name: README required public-positioning scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUIRED=(
+            "local-first execution governance SDK"
+            "Execution stays local"
+            "does not require a hosted service"
+            "npx lbe"
+            "@letterblack/lbe-core"
+            "LBE is not a sandbox"
+            "routed through the LBE boundary"
+          )
+          for pattern in "${REQUIRED[@]}"; do
+            if ! grep -qiF "$pattern" README.md; then
+              echo "HARD STOP: README missing required wording: $pattern"
+              exit 1
+            fi
+          done
+          echo "README required wording check passed."
+
+      - name: NPM pack exact safety
         shell: bash
         run: |
           set -euo pipefail
@@ -42,11 +131,14 @@ jobs:
           echo "$PACK_JSON" | grep -q "dist/cli.js" || (echo "Missing dist/cli.js"; exit 1)
 
           # Forbidden paths in npm pack
-          FORBIDDEN=".env keys/ tests/ src/ scripts/ .github/ release-public/ package-lock.json"
+          FORBIDDEN=".github/ src/ scripts/ tests/ keys/ config/ data/ .lbe/ release-public/ release-exec/ package-lock.json .env"
           for p in $FORBIDDEN; do
             if echo "$PACK_JSON" | grep -q "\"$p"; then
               echo "HARD STOP: forbidden path in npm pack: $p"
               exit 1
             fi
           done
-          echo "Public validation passed."
+          echo "NPM pack safety check passed."
+
+      - name: Public validation passed
+        run: echo "All public mirror validation checks passed."
