@@ -2,9 +2,10 @@
 // @letterblack/lbe-core v1.3.37
 import fs from 'node:fs';
 import path from 'node:path';
+import readline from 'node:readline';
 import { execute } from './index.js';
 
-const cmd = process.argv[2];
+let cmd = process.argv[2];
 const cwd = process.cwd();
 const policyFile = path.join(cwd, 'lbe.policy.json');
 const lbeDir = path.join(cwd, '.lbe');
@@ -42,6 +43,74 @@ function ensurePolicy() {
   const p = { version: 1, mode: 'observe', workspace: cwd, rules: [] };
   writePolicy(p);
   return p;
+}
+
+function line(text = '') {
+  process.stdout.write(String(text) + '\n');
+}
+
+function ask(question) {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+function printTerminalMenu() {
+  const policy = readPolicy();
+  line('');
+  line('LetterBlack Sentinel — Terminal');
+  line('Local execution boundary');
+  line('');
+  line('Workspace  ' + cwd);
+  line('Mode       ' + (policy?.mode ?? 'not initialised'));
+  line('Scope      ' + (fs.existsSync(scopeFile) ? 'registered' : 'not found'));
+  line('Intent     ' + (fs.existsSync(intentLog) ? String(readJsonl(intentLog).length) + ' entries' : 'not found'));
+  line('Proof      ' + (fs.existsSync(proofFile) ? 'available' : 'not found'));
+  line('Cloud      optional status/proof connection');
+  line('Execution  local only');
+  line('');
+  line('Select an action:');
+  line('');
+  line('  1. Initialize / Repair Workspace');
+  line('  2. Check Status');
+  line('  3. View Scope');
+  line('  4. View Intent');
+  line('  5. View Proof');
+  line('  6. View Policy');
+  line('  7. Observe Mode');
+  line('  8. Enforce Mode');
+  line('  9. Execute JSON Request');
+  line('  q. Exit');
+  line('');
+}
+
+async function chooseCommand() {
+  printTerminalMenu();
+  if (!process.stdin.isTTY) {
+    line('Non-interactive shell detected. Use a direct command such as: npx lbe status');
+    return null;
+  }
+  const choice = (await ask('Choice: ')).toLowerCase();
+  return ({
+    '1': 'init',
+    '2': 'status',
+    '3': 'scope',
+    '4': 'intent',
+    '5': 'proof',
+    '6': 'policy',
+    '7': 'observe',
+    '8': 'enforce',
+    '9': 'execute',
+  })[choice] || null;
+}
+
+if (!cmd) {
+  cmd = await chooseCommand();
+  if (!cmd) process.exit(0);
 }
 
 // ── lbe init ──────────────────────────────────────────────────────────────
@@ -185,20 +254,5 @@ if (cmd === 'execute') {
   }
 }
 
-// ── usage ─────────────────────────────────────────────────────────────────
-if (!cmd) {
-  process.stdout.write('\nUsage:\n');
-  process.stdout.write('  npx lbe init       Set up LBE in this project\n');
-  process.stdout.write('  npx lbe status     Show current mode and rule count\n');
-  process.stdout.write('  npx lbe scope      Show scope contract status\n');
-  process.stdout.write('  npx lbe intent     Show latest intent status\n');
-  process.stdout.write('  npx lbe proof      Show latest proof status\n');
-  process.stdout.write('  npx lbe policy     List all rules\n');
-  process.stdout.write('  npx lbe observe    Switch to observer mode (watch, never block)\n');
-  process.stdout.write('  npx lbe enforce    Switch to enforcement mode (block violations)\n');
-  process.stdout.write('  npx lbe execute    Run a raw JSON request (advanced)\n\n');
-  process.exit(0);
-}
-
-process.stderr.write('Unknown command: ' + cmd + '\nRun \'npx lbe\' for usage.\n');
+process.stderr.write('Unknown command: ' + cmd + '\nRun \'npx lbe\' for the terminal menu.\n');
 process.exit(2);

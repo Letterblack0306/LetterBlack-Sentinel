@@ -44,7 +44,7 @@ LBE is the local execution-control layer for AI agents before they touch real sy
     <td>
       <strong>Beta status</strong><br>
       LBE is currently in public beta. The current public package provides a local SDK and CLI for validating host-routed AI-agent actions, checking scope, and producing local proof/audit evidence.<br><br>
-      LBE is terminal-first. The product direction is a branded CLI/TUI experience rather than a required browser dashboard.<br><br>
+      LBE is terminal-first. Run `npx lbe` after installing the scoped package to open the local terminal menu; direct commands remain available for automation.<br><br>
       An optional authenticated cloud connection is available for status, workspace connection, and proof/control-plane visibility. Execution remains local. LBE Cloud does not execute shell commands, mutate your filesystem, or provide a shared hosted execution workspace.
     </td>
   </tr>
@@ -60,7 +60,7 @@ LBE is the local execution-control layer for AI agents before they touch real sy
 
 | Terminal-first | Local policy | Local proof | Optional cloud status |
 |---|---|---|---|
-| CLI/TUI workflow | You own the rules | Evidence stays local | Cloud connects, local executes |
+| Branded terminal menu | You own the rules | Evidence stays local | Cloud connects, local executes |
 
 ## How LBE fits into an agent workflow
 
@@ -91,6 +91,7 @@ Requires Node.js >= 20.9.0.
 ### Quick start
 
 ```bash
+npx lbe
 npx lbe init
 npx lbe status
 npx lbe scope
@@ -98,13 +99,21 @@ npx lbe intent
 npx lbe proof
 ```
 
-Start with `status`, `scope`, and `proof` before going deeper.
+Start with `npx lbe` for the terminal menu, or use direct commands for scripts and automation.
+
+For a one-off run before local install, use the scoped package explicitly:
+
+```bash
+npx --yes --package @letterblack/lbe-core@latest lbe
+```
+
+Do not rely on bare `npx lbe` before installation; npm may resolve an unrelated package named `lbe`.
 
 ## Terminal-first workflow
 
-Sentinel is designed to stay close to the workspace. The preferred product direction is a branded terminal experience: live API status, connected workspace state, proof views, policy checks, and selectable actions directly inside the terminal.
+Sentinel is designed to stay close to the workspace. Running `npx lbe` with no arguments opens a branded terminal menu (TUI) that displays the LBE logo, workspace status, policy mode, proof status, and a numbered action menu.
 
-A browser dashboard is not required for the current beta.
+Users can select actions interactively (initialize, status, logs, proof, verify, observe, enforce, etc.) or use direct commands for repeatable automation. A browser dashboard is not required for the current beta.
 
 ## Why LBE exists
 
@@ -173,6 +182,7 @@ Note: hard blocking for all tool paths requires a stricter execution bridge.
 
 | Command | Purpose |
 |---|---|
+| `npx lbe` | Open the branded terminal menu (TUI). |
 | `npx lbe init` | Initialize LBE state for the workspace. |
 | `npx lbe status` | Show current workspace status and high-level LBE state. |
 | `npx lbe scope` | Inspect or manage scope-related status. |
