@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ALLOWED='^(.github|assets|dist|docs|\.npmignore|LICENSE|package\.json|README\.md|types\.d\.ts)
+          ALLOWED='^(.github|assets|dist|docs|\.npmignore|LICENSE|package\.json|README\.md|types\.d\.ts)$'
 
           for entry in *; do
             if ! echo "$entry" | grep -Eq "$ALLOWED"; then
