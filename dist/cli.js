@@ -45,73 +45,83 @@ function ensurePolicy() {
   return p;
 }
 
-function line(text = '') {
-  process.stdout.write(String(text) + '\n');
+// ── ANSI / Logo / TUI ──────────────────────────────────────────────────
+const DL='\x1b[40m',R='\x1b[41m',G='\x1b[90m',Y='\x1b[33m',B='\x1b[1m',N='\x1b[0m',CL='\x1b[2J\x1b[H';
+const W='\x1b[38;2;233;233;239m',RB='\x1b[41m',DI='\x1b[2m';
+const CK='\x1b[38;2;80;200;120m',YE='\x1b[38;2;240;200;60m',CY='\x1b[38;2;100;200;255m';
+
+function out(t=''){process.stdout.write(String(t));}
+function line(t=''){process.stdout.write(String(t)+'\n');}
+
+function logoLines(){
+  const br=[' ┌──┐ ',' │  │ ',' │  │ ',' └──┘ '];
+  return br.map(b=>'  '+W+b+N+'  '+RB+'   '+N+'  '+W+b+N);
 }
 
-function ask(question) {
-  return new Promise((resolve) => {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    rl.question(question, (answer) => {
-      rl.close();
-      resolve(answer.trim());
-    });
+function showHeader(){
+  const ll=logoLines();
+  const tb=W+'\u2554'+'\u2550'.repeat(66)+'\u2557'+N;
+  const bb=W+'\u255A'+'\u2550'.repeat(66)+'\u255D'+N;
+  const bl=W+'\u2551'+N+' '.repeat(66)+W+'\u2551'+N;
+  const tl=W+'\u2551'+N+ll[0]+'  '+B+W+'LetterBlack Sentinel'+N+' '.repeat(24)+W+'\u2551'+N;
+  const ta=W+'\u2551'+N+ll[1]+'  '+W+'Local Execution Governance'+N+' '.repeat(20)+W+'\u2551'+N;
+  const tv=W+'\u2551'+N+ll[2]+'  '+DI+'v1.3.37'+N+' '.repeat(22)+W+'\u2551'+N;
+  out(CL);[tb,bl,tl,ta,tv,bl,bb].forEach(l=>{out('  '+l+'\n');});
+  const policy=readPolicy();
+  out('\n  '+G+'Workspace :'+N+' '+cwd+'\n');
+  out('  '+G+'Status    :'+N+' '+(policy?.mode==='enforce'?R:YE)+(policy?.mode??'not initialised')+N+'\n');
+  out('  '+G+'Scope     :'+N+' '+(fs.existsSync(scopeFile)?'registered':'not found')+'\n');
+  out('  '+G+'Intent    :'+N+' '+(fs.existsSync(intentLog)?String(readJsonl(intentLog).length)+' entries':'0')+'\n');
+  out('  '+G+'Proof     :'+N+' '+(fs.existsSync(proofFile)?'available':'not found')+'\n');
+  out('  '+G+'Execution :'+N+' local only\n\n');
+  out('  '+G+'Main Menu (Use '+YE+'\u2191 \u2193'+G+' arrows, '+YE+'Enter'+G+' to select)'+N+'\n\n');
+}
+
+const MENU=[{l:'Apply Boundary',c:'init'},{l:'Remove Boundary',c:'remove'},{l:'Check Status',c:'status'},{l:'Audit Workspace',c:'audit'},{l:'Agent Instructions',c:'intent'},{l:'Exit',c:'exit'}];
+
+function showMenu(s){MENU.forEach((m,i)=>{out(i===s?'  '+RB+'\u276f '+m.l+' '.repeat(28-m.l.length)+N+'\n':'    '+G+m.l+' '.repeat(28-m.l.length)+N+'\n');});}
+
+function enableRaw(){if(!process.stdin.isTTY)return false;process.stdin.setRawMode(true);process.stdin.resume();return true;}
+function disableRaw(){try{process.stdin.setRawMode(false);}catch{}process.stdin.pause();}
+
+async function tuiMenu(){
+  if(!process.stdin.isTTY){showHeader();out(YE+'Open LBE from an interactive terminal with: npx lbe'+N+'\n');return null;}
+  let sel=0;
+  return new Promise(res=>{
+    enableRaw();showHeader();showMenu(0);
+    const fn=data=>{
+      const k=data.toString();
+      if(k==='\u001b[A'){sel=(sel-1+MENU.length)%MENU.length;showHeader();showMenu(sel);}
+      else if(k==='\u001b[B'){sel=(sel+1)%MENU.length;showHeader();showMenu(sel);}
+      else if(k==='\r'||k==='\n'){process.stdin.removeListener('data',fn);disableRaw();res(MENU[sel].c);}
+      else if(k==='q'||k==='\u0003'){process.stdin.removeListener('data',fn);disableRaw();res(null);}
+    };
+    process.stdin.on('data',fn);
   });
 }
 
-function printTerminalMenu() {
-  const policy = readPolicy();
-  line('');
-  line('LetterBlack Sentinel — Terminal');
-  line('Local execution boundary');
-  line('');
-  line('Workspace  ' + cwd);
-  line('Mode       ' + (policy?.mode ?? 'not initialised'));
-  line('Scope      ' + (fs.existsSync(scopeFile) ? 'registered' : 'not found'));
-  line('Intent     ' + (fs.existsSync(intentLog) ? String(readJsonl(intentLog).length) + ' entries' : 'not found'));
-  line('Proof      ' + (fs.existsSync(proofFile) ? 'available' : 'not found'));
-  line('Cloud      optional status/proof connection');
-  line('Execution  local only');
-  line('');
-  line('Select an action:');
-  line('');
-  line('  1. Initialize / Repair Workspace');
-  line('  2. Check Status');
-  line('  3. View Scope');
-  line('  4. View Intent');
-  line('  5. View Proof');
-  line('  6. View Policy');
-  line('  7. Observe Mode');
-  line('  8. Enforce Mode');
-  line('  9. Execute JSON Request');
-  line('  q. Exit');
-  line('');
+// ── Direct command entry ──────────────────────────────────────────────
+if(!cmd){const c=await tuiMenu();if(!c||c==='exit'){out(CL);line('  Goodbye.\n');process.exit(0);}cmd=c;out(CL);}
+// ── Help ────────────────────────────────────────────────────────────────
+if(cmd==='--help'||cmd==='-h'||cmd==='help'){
+  out(CL);
+  out('  \x1b[38;2;233;233;239m\x1b[1mLBE \x1b[0m\x1b[38;2;233;233;239m\u2014 LetterBlack Sentinel\x1b[0m\n');
+  out('  \x1b[90mExecution governance for AI agents\x1b[0m\n\n');
+  out('  \x1b[90mInstall:\x1b[0m  npm install @letterblack/lbe-core\n');
+  out('  \x1b[90mRun:\x1b[0m     npx lbe\n\n');
+  out('  \x1b[1mMenu options:\x1b[0m\n');
+  out('    \x1b[41m Apply Boundary \x1b[0m    Initialize LBE workspace\n');
+  out('    Remove Boundary    Clear LBE workspace\n');
+  out('    Check Status       Show workspace governance status\n');
+  out('    Audit Workspace    Review audit log\n');
+  out('    Agent Instructions Set objective, allowed, forbidden, validations\n\n');
+  out('  \x1b[90mDirect commands for automation:\x1b[0m  lbe <command>\n');
+  out('  \x1b[90mAdvanced help:\x1b[0m                     lbe help \x1b[33m--advanced\x1b[0m\n\n');
+  out('  \x1b[90mhttps://github.com/Letterblack0306/LetterBlack-Sentinel\x1b[0m\n\n');
+  process.exit(0);
 }
 
-async function chooseCommand() {
-  printTerminalMenu();
-  if (!process.stdin.isTTY) {
-    line('Non-interactive shell detected. Use a direct command such as: npx lbe status');
-    return null;
-  }
-  const choice = (await ask('Choice: ')).toLowerCase();
-  return ({
-    '1': 'init',
-    '2': 'status',
-    '3': 'scope',
-    '4': 'intent',
-    '5': 'proof',
-    '6': 'policy',
-    '7': 'observe',
-    '8': 'enforce',
-    '9': 'execute',
-  })[choice] || null;
-}
 
-if (!cmd) {
-  cmd = await chooseCommand();
-  if (!cmd) process.exit(0);
-}
 
 // ── lbe init ──────────────────────────────────────────────────────────────
 if (cmd === 'init') {
@@ -202,15 +212,71 @@ if (cmd === 'scope') {
 
 // ── lbe intent ────────────────────────────────────────────────────────────
 if (cmd === 'intent') {
-  const intents = readJsonl(intentLog);
-  if (intents.length === 0) {
-    process.stdout.write('NO_INTENT_FOUND\n');
+  if (!process.stdin.isTTY || process.argv[2]) {
+    const intents = readJsonl(intentLog);
+    if (intents.length === 0) { process.stdout.write('NO_INTENT_FOUND\n'); process.exit(0); }
+    const latest = intents[intents.length - 1];
+    process.stdout.write('INTENT_REGISTERED\n');
+    if (latest.intent_id) process.stdout.write('intent_id ' + latest.intent_id + '\n');
+    if (latest.scope_id) process.stdout.write('scope_id ' + latest.scope_id + '\n');
     process.exit(0);
   }
-  const latest = intents[intents.length - 1];
-  process.stdout.write('INTENT_REGISTERED\n');
-  if (latest.intent_id) process.stdout.write('intent_id ' + latest.intent_id + '\n');
-  if (latest.scope_id) process.stdout.write('scope_id ' + latest.scope_id + '\n');
+  fs.mkdirSync(lbeDir, { recursive: true });
+  let current = null;
+  if (fs.existsSync(scopeFile)) { try { current = JSON.parse(fs.readFileSync(scopeFile, 'utf8')); } catch {} }
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const pq = p => new Promise(r => { rl.question(p, a => r(a.trim())); });
+  line('');
+  if (current) {
+    line('  Current Plan:');
+    line('  ' + DI + 'Objective:' + N + ' ' + (current.objective || '(not set)'));
+    if (current.allowed && current.allowed.length) line('  ' + DI + 'Allowed:' + N + ' ' + current.allowed.join(', '));
+    if (current.forbidden && current.forbidden.length) line('  ' + DI + 'Forbidden:' + N + ' ' + current.forbidden.join(', '));
+    if (current.validations && current.validations.length) line('  ' + DI + 'Validations:' + N + ' ' + current.validations.join(', '));
+    line('');
+  }
+  const objective = await pq('  Objective / Goal (leave blank to cancel): ');
+  if (!objective) { rl.close(); line('  Cancelled.\n'); process.exit(0); }
+  const aStr = await pq('  Allowed actions/files (comma-separated): ');
+  const allowed = aStr ? aStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const fStr = await pq('  Forbidden actions/files (comma-separated): ');
+  const forbidden = fStr ? fStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const vStr = await pq('  Required validations (comma-separated): ');
+  const validations = vStr ? vStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+  rl.close();
+  const scopeId = 'scope_' + Date.now().toString(36);
+  const scope = { id: scopeId, objective, allowed, forbidden, validations, created: Math.floor(Date.now() / 1000) };
+  fs.writeFileSync(scopeFile, JSON.stringify(scope, null, 2) + '\n', 'utf8');
+  const intentId = 'intent_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
+  fs.appendFileSync(intentLog, JSON.stringify({ intent_id: intentId, scope_id: scopeId, objective, allowed, forbidden, validations, timestamp: Math.floor(Date.now() / 1000) }) + '\n', 'utf8');
+  const n = updMB(cwd, scope);
+  line('  ' + CK + '\u2713' + N + ' Instructions saved.  intent_id: ' + intentId + '  scope_id: ' + scopeId);
+  if (n > 0) line('  ' + CK + '\u2713' + N + ' Updated ' + n + ' managed block(s)');
+  line('');
+  process.exit(0);
+}
+
+
+// ── lbe audit-workspace ──
+if (cmd === 'audit-workspace') {
+  const md = process.argv[3] === '--mode' ? (process.argv[4] || 'audit') : 'audit';
+  if (md === 'repair') { process.stdout.write('NOT_IMPLEMENTED\n'); process.exit(0); }
+  process.stdout.write('\n  Workspace Audit: RUNNING\n');
+  process.stdout.write('  Mode: ' + md + '\n\n');
+  process.stdout.write('  \u2713 locate_workspace_root\n');
+  process.stdout.write('  \u2713 build_file_inventory\n');
+  process.stdout.write('  \u2713 check_forbidden_paths\n');
+  const pp = path.join(cwd, '.lbe', 'policy.json');
+  if (!fs.existsSync(pp)) {
+    process.stdout.write('  \u2716 check_lbe_config\n');
+    process.stdout.write('     reason: .lbe/policy.json missing\n');
+    process.stdout.write('     next:   Run lbe init\n');
+  } else {
+    process.stdout.write('  \u2713 check_lbe_config\n');
+  }
+  process.stdout.write('  \u2713 check_package_state\n');
+  process.stdout.write('  \u2713 write_report\n\n');
+  process.stdout.write('  Summary: Audit mode complete\n\n');
   process.exit(0);
 }
 

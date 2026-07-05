@@ -1,4 +1,4 @@
-# LetterBlack Engine — LBE
+# @letterblack/lbe-core
 
 <p align="center">
   <img src="assets/banner.png" alt="LBE public banner" width="100%">
@@ -14,14 +14,10 @@
 
 <p align="center">
   <strong>Local-first · Terminal-first · SDK + CLI · Scope-aware proof</strong><br>
-  Execution governance for AI agents.
+  Local execution boundary for AI agents.
 </p>
 
-LBE is a local-first execution governance SDK for AI agents.
-
-It sits between an AI agent proposing an action and the host system executing that action. LBE validates the proposed action against policy, checks workspace scope, records audit evidence, and returns an allow/deny decision.
-
-Execution stays local. LBE does not require a hosted service, remote shell, daemon, or network API for its core governance path.
+LBE helps your application validate agent actions before your host executes them. It adds local policy checks, scope-aware proof, audit visibility, and a terminal-first workflow for understanding what an agent was supposed to do versus what actually happened.
 
 ## AI agents are getting stronger. Their execution layer is not.
 
@@ -31,14 +27,14 @@ That works while agents are weak.
 
 But agents already write files, run shell commands, control browsers, edit configs, and trigger workflows. Soon they will touch publishing, databases, deployments, credentials, and production systems.
 
-At that point, &ldquo;the agent meant well&rdquo; is not enough.
+At that point, “the agent meant well” is not enough.
 
 LBE exists for the moment between an AI agent deciding what to do and the system actually doing it.
 
 It checks the action, validates the boundary, records proof, and gives the host a clearer decision before accepting or executing the work.
 
-Not another agent framework.  
-Not another chat UI.  
+Not another agent framework.
+Not another chat UI.
 Not another model wrapper.
 
 LBE is the local execution-control layer for AI agents before they touch real systems.
@@ -48,8 +44,8 @@ LBE is the local execution-control layer for AI agents before they touch real sy
     <td>
       <strong>Beta status</strong><br>
       LBE is currently in public beta. The current public package provides a local SDK and CLI for validating host-routed AI-agent actions, checking scope, and producing local proof/audit evidence.<br><br>
-      LBE is terminal-first. Run <code>npx lbe</code> after installing the scoped package to open the local terminal menu; direct commands exist for automation and CI.<br><br>
-      Execution remains local. LBE does not execute shell commands by itself, mutate your filesystem by itself, or provide remote execution.
+      LBE is terminal-first. Run `npx lbe` after installing the scoped package to open the local terminal menu; direct commands remain available for automation.<br><br>
+      An optional authenticated cloud connection is available for status, workspace connection, and proof/control-plane visibility. Execution remains local. LBE Cloud does not execute shell commands, mutate your filesystem, or provide a shared hosted execution workspace.
     </td>
   </tr>
 </table>
@@ -57,18 +53,18 @@ LBE is the local execution-control layer for AI agents before they touch real sy
 <p align="center">
   <a href="#install-first-then-start-simple"><strong>Get started</strong></a>
   ·
-  <a href="#automation--advanced-usage"><strong>Automation</strong></a>
+  <a href="#common-commands"><strong>See commands</strong></a>
   ·
   <a href="#technical-visuals"><strong>Technical visuals</strong></a>
 </p>
 
-| Terminal-first | Local policy | Local proof | Local status |
+| Terminal-first | Local policy | Local proof | Optional cloud status |
 |---|---|---|---|
-| Branded terminal menu | You own the rules | Evidence stays local | Host routes, LBE decides |
+| Branded terminal menu | You own the rules | Evidence stays local | Cloud connects, local executes |
 
 ## How LBE fits into an agent workflow
 
-A simple public diagram: proposal &rarr; decision &rarr; execution &rarr; evidence.
+A simple public diagram: proposal -> decision -> execution -> evidence.
 
 ```mermaid
 flowchart LR
@@ -81,6 +77,8 @@ flowchart LR
 ```
 
 ## Install first, then start simple
+
+The first thing users need is a clear install step and obvious commands.
 
 ### Install
 
@@ -96,9 +94,12 @@ Requires Node.js >= 20.9.0.
 npx lbe
 npx lbe init
 npx lbe status
+npx lbe scope
+npx lbe intent
+npx lbe proof
 ```
 
-Start with `npx lbe` for the interactive terminal menu. The menu guides you through initialization, scope management, intent lifecycle, proof checks, and more.
+Start with `npx lbe` for the terminal menu, or use direct commands for scripts and automation.
 
 For a one-off run before local install, use the scoped package explicitly:
 
@@ -108,11 +109,11 @@ npx --yes --package @letterblack/lbe-core@latest lbe
 
 Do not rely on bare `npx lbe` before installation; npm may resolve an unrelated package named `lbe`.
 
-### Terminal-first workflow
+## Terminal-first workflow
 
-LBE is designed to stay close to the workspace. Running `npx lbe` with no arguments opens a branded terminal menu (TUI) that displays the LBE logo, workspace status, policy mode, proof status, and a numbered action menu.
+Sentinel is designed to stay close to the workspace. Running `npx lbe` with no arguments opens a branded terminal menu (TUI) that displays the LBE logo, workspace status, policy mode, proof status, and a numbered action menu.
 
-Users can select actions interactively or use direct commands for repeatable automation. A browser dashboard is not required for the current beta.
+Users can select actions interactively (initialize, status, logs, proof, verify, observe, enforce, etc.) or use direct commands for repeatable automation. A browser dashboard is not required for the current beta.
 
 ## Why LBE exists
 
@@ -125,7 +126,6 @@ AI agents are powerful, but prompts alone do not create a durable contract. LBE 
 ## Story flow
 
 This is the visual narrative of how LBE fits into a real workflow.
-
 
 | Step | Phase | What happens |
 |---:|---|---|
@@ -141,7 +141,7 @@ This is the visual narrative of how LBE fits into a real workflow.
 |---|---|
 | The task may be described, but not truly tracked. | The task becomes a declared contract. |
 | Unrelated files can be changed without clear visibility. | Proof can detect work outside scope. |
-| The agent can say &ldquo;done&rdquo; without enough evidence. | Status can show missing scope, missing intent, or incomplete validation. |
+| The agent can say "done" without enough evidence. | Status can show missing scope, missing intent, or incomplete validation. |
 | Review depends heavily on manual checking. | The host gets clearer decision support before accepting the work. |
 
 ## Visual infographics
@@ -149,7 +149,7 @@ This is the visual narrative of how LBE fits into a real workflow.
 These graphs are illustrative, not performance benchmarks. They explain what value LBE adds to agent workflows.
 
 | Capability | Illustrative strength |
-|---:|---:|
+|---|---:|
 | Task clarity | 92% |
 | Scope visibility | 90% |
 | Proof / audit readiness | 95% |
@@ -169,7 +169,6 @@ Note: hard blocking for all tool paths requires a stricter execution bridge.
 | `VALIDATION_MISSING` | Required checks were not proven. |
 | `PROOF_INCOMPLETE` | Evidence exists but is not complete yet. |
 
-
 ## Practical scenarios
 
 | Scenario | How LBE helps |
@@ -179,13 +178,11 @@ Note: hard blocking for all tool paths requires a stricter execution bridge.
 | Scope proof | Prove whether final work matched the approved objective instead of trusting the final message. |
 | New project observation | Start with visibility and proof workflows before moving toward stricter enforcement patterns. |
 
-## Automation & advanced usage
-
-Direct commands exist for scripting, CI, and automation workflows:
+## Common commands
 
 | Command | Purpose |
 |---|---|
-| `npx lbe` | Open the interactive terminal menu (primary entry). |
+| `npx lbe` | Open the branded terminal menu (TUI). |
 | `npx lbe init` | Initialize LBE state for the workspace. |
 | `npx lbe status` | Show current workspace status and high-level LBE state. |
 | `npx lbe scope` | Inspect or manage scope-related status. |
@@ -195,10 +192,7 @@ Direct commands exist for scripting, CI, and automation workflows:
 | `npx lbe observe` | Use advisory mode. |
 | `npx lbe enforce` | Use blocking policy mode for routed actions. |
 
-
-## Programmatic API (preview)
-
-Current public SDK entrypoint: `execute(input: string): string`. This is the minimal public boundary for the current preview package.
+## Programmatic API
 
 ```js
 import { execute } from '@letterblack/lbe-core';
@@ -213,20 +207,21 @@ const proposal = {
     name: 'write_file',
     payload: { target: 'output.js' }
   },
-  context: { workspace: process.cwd() }
+  context: { workspace: process.cwd() },
+  auth: { signature: '<host-signed>', token: '<unique-per-request>' }
 };
 
 const result = JSON.parse(execute(JSON.stringify(proposal)));
 ```
 
-`execute()` is synchronous, accepts JSON, and returns JSON. Your host decides what to do with the result.
+`execute(input: string): string` is synchronous, accepts JSON, and returns JSON. Your host decides what to do with the result.
 
 ## What ships in this package
 
 ```text
-dist/index.js               WASM runtime loader
+dist/index.js               WebAssembly runtime loader
 dist/cli.js                 CLI (npx lbe)
-dist/lbe_engine.wasm        WASM-based decision runtime
+dist/lbe_engine.wasm        Runtime binary
 dist/wasm.lock.json         Runtime integrity lock
 assets/banner.png           Public README banner
 assets/runtime-boundary.svg Runtime boundary diagram
@@ -251,9 +246,8 @@ LBE is not a sandbox, container, or OS-level isolation layer. It controls only t
 - Does not prevent an agent from calling external APIs directly
 - Does not provide public hosted shell execution
 - Does not provide public hosted filesystem mutation
+- Does not make LBE Cloud the owner of your workspace or execution path
+
 If an agent writes directly to the filesystem without going through your host/LBE boundary, LBE does not see that action.
 
 LBE governs actions explicitly routed through the LBE boundary.
-
-
-
