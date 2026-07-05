@@ -44,8 +44,8 @@ LBE is the local execution-control layer for AI agents before they touch real sy
     <td>
       <strong>Beta status</strong><br>
       LBE is currently in public beta. The current public package provides a local SDK and CLI for validating host-routed AI-agent actions, checking scope, and producing local proof/audit evidence.<br><br>
-      LBE is terminal-first. Run `npx lbe` after installing the scoped package to open the local terminal menu; direct commands remain available for automation.<br><br>
-      An optional authenticated cloud connection is available for status, workspace connection, and proof/control-plane visibility. Execution remains local. LBE Cloud does not execute shell commands, mutate your filesystem, or provide a shared hosted execution workspace.
+      LBE is terminal-first. Run `npx lbe` after installing the scoped package to open the local terminal menu; direct commands remain available for scripts, CI, and automation.<br><br>
+      Execution remains local. LBE does not execute shell commands, mutate your filesystem, or provide a hosted execution workspace unless your own host explicitly routes actions through it.
     </td>
   </tr>
 </table>
@@ -53,14 +53,14 @@ LBE is the local execution-control layer for AI agents before they touch real sy
 <p align="center">
   <a href="#install-first-then-start-simple"><strong>Get started</strong></a>
   ·
-  <a href="#common-commands"><strong>See commands</strong></a>
+  <a href="#automation-usage"><strong>Automation usage</strong></a>
   ·
   <a href="#technical-visuals"><strong>Technical visuals</strong></a>
 </p>
 
-| Terminal-first | Local policy | Local proof | Optional cloud status |
+| Terminal-first | Local policy | Local proof | Host-controlled execution |
 |---|---|---|---|
-| Branded terminal menu | You own the rules | Evidence stays local | Cloud connects, local executes |
+| Branded terminal menu | You own the rules | Evidence stays local | Your host decides what runs |
 
 ## How LBE fits into an agent workflow
 
@@ -78,7 +78,7 @@ flowchart LR
 
 ## Install first, then start simple
 
-The first thing users need is a clear install step and obvious commands.
+The first thing users need is a clear install step and one obvious terminal entry point.
 
 ### Install
 
@@ -92,14 +92,9 @@ Requires Node.js >= 20.9.0.
 
 ```bash
 npx lbe
-npx lbe init
-npx lbe status
-npx lbe scope
-npx lbe intent
-npx lbe proof
 ```
 
-Start with `npx lbe` for the terminal menu, or use direct commands for scripts and automation.
+This opens the local terminal menu.
 
 For a one-off run before local install, use the scoped package explicitly:
 
@@ -111,9 +106,9 @@ Do not rely on bare `npx lbe` before installation; npm may resolve an unrelated 
 
 ## Terminal-first workflow
 
-Sentinel is designed to stay close to the workspace. Running `npx lbe` with no arguments opens a branded terminal menu (TUI) that displays the LBE logo, workspace status, policy mode, proof status, and a numbered action menu.
+Sentinel is designed to stay close to the workspace. Running `npx lbe` with no arguments opens a branded terminal menu (TUI) that displays the LBE logo, workspace status, policy mode, proof status, and an arrow-key action menu.
 
-Users can select actions interactively (initialize, status, logs, proof, verify, observe, enforce, etc.) or use direct commands for repeatable automation. A browser dashboard is not required for the current beta.
+Most users can work from the menu: apply a boundary, remove a boundary, check status, audit the workspace, and manage agent instructions. Direct commands remain available for repeatable automation. A browser dashboard is not required for the current beta.
 
 ## Why LBE exists
 
@@ -178,7 +173,11 @@ Note: hard blocking for all tool paths requires a stricter execution bridge.
 | Scope proof | Prove whether final work matched the approved objective instead of trusting the final message. |
 | New project observation | Start with visibility and proof workflows before moving toward stricter enforcement patterns. |
 
-## Common commands
+<a id="automation-usage"></a>
+
+## Automation usage
+
+Most users should start with `npx lbe` and use the terminal menu. Direct commands are for scripts, CI, and repeatable automation.
 
 | Command | Purpose |
 |---|---|
@@ -246,7 +245,7 @@ LBE is not a sandbox, container, or OS-level isolation layer. It controls only t
 - Does not prevent an agent from calling external APIs directly
 - Does not provide public hosted shell execution
 - Does not provide public hosted filesystem mutation
-- Does not make LBE Cloud the owner of your workspace or execution path
+- Does not make any remote service the owner of your workspace or execution path
 
 If an agent writes directly to the filesystem without going through your host/LBE boundary, LBE does not see that action.
 
