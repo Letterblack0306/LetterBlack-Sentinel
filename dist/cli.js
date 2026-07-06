@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// @letterblack/lbe-core v1.3.39
+// @letterblack/lbe-core v1.3.40
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
@@ -83,49 +83,30 @@ function showHeader(){
   const bb=W+'╚'+'═'.repeat(w)+'╝'+N;
   const bl=W+'║'+N+' '.repeat(w)+W+'║'+N;
   out(CL);
-  out('  '+tb+'
-');
-  out('  '+bl+'
-');
+  out('  '+tb+'\n');
+  out('  '+bl+'\n');
   for(const l of ll){
     const plain=l.replace(/[[0-9;]*m/g,'');
     const pad=plain.length<w?l+' '.repeat(w-plain.length):plain.slice(0,w);
-    out('  '+W+'║'+N+pad+W+'║'+N+'
-');
+    out('  '+W+'║'+N+pad+W+'║'+N+'\n');
   }
-  out('  '+bl+'
-');
+  out('  '+bl+'\n');
   const title=B+W+'LetterBlack Sentinel'+N;
-  out('  '+W+'║'+N+'  '+title+' '.repeat(w-2-20)+W+'║'+N+'
-');
+  out('  '+W+'║'+N+'  '+title+' '.repeat(w-2-20)+W+'║'+N+'\n');
   const tag=W+'Local Execution Governance'+N;
-  out('  '+W+'║'+N+'  '+tag+' '.repeat(w-2-27)+W+'║'+N+'
-');
-  const vt='v'+publicPackageVersion;
-  out('  '+W+'║'+N+'  '+DI+vt+N+' '.repeat(w-2-2-vt.length)+W+'║'+N+'
-');
-  out('  '+bl+'
-');
-  out('  '+bb+'
-');
+  out('  '+W+'║'+N+'  '+tag+' '.repeat(w-2-27)+W+'║'+N+'\n');
+  const vt='v'+'1.3.40';
+  out('  '+W+'║'+N+'  '+DI+vt+N+' '.repeat(w-2-2-vt.length)+W+'║'+N+'\n');
+  out('  '+bl+'\n');
+  out('  '+bb+'\n');
   const policy=readPolicy();
-  out('
-  '+G+'Workspace :'+N+' '+cwd+'
-');
-  out('  '+G+'Status    :'+N+' '+(policy?.mode==='enforce'?R:YE)+(policy?.mode??'not initialised')+N+'
-');
-  out('  '+G+'Scope     :'+N+' '+(fs.existsSync(scopeFile)?'registered':'not found')+'
-');
-  out('  '+G+'Intent    :'+N+' '+(fs.existsSync(intentLog)?String(readJsonl(intentLog).length)+' entries':'0')+'
-');
-  out('  '+G+'Proof     :'+N+' '+(fs.existsSync(proofFile)?'available':'not found')+'
-');
-  out('  '+G+'Execution :'+N+' local only
-
-');
-  out('  '+G+'Main Menu (Use '+YE+'↑ ↓'+G+' arrows, '+YE+'Enter'+G+' to select)'+N+'
-
-');
+  out('\n  '+G+'Workspace :'+N+' '+cwd+'\n');
+  out('  '+G+'Status    :'+N+' '+(policy?.mode==='enforce'?R:YE)+(policy?.mode??'not initialised')+N+'\n');
+  out('  '+G+'Scope     :'+N+' '+(fs.existsSync(scopeFile)?'registered':'not found')+'\n');
+  out('  '+G+'Intent    :'+N+' '+(fs.existsSync(intentLog)?String(readJsonl(intentLog).length)+' entries':'0')+'\n');
+  out('  '+G+'Proof     :'+N+' '+(fs.existsSync(proofFile)?'available':'not found')+'\n');
+  out('  '+G+'Execution :'+N+' local only\n\n');
+  out('  '+G+'Main Menu (Use '+YE+'↑ ↓'+G+' arrows, '+YE+'Enter'+G+' to select)'+N+'\n\n');
 }
 const MENU=[{l:'Apply Boundary',c:'init'},{l:'Remove Boundary',c:'remove'},{l:'Check Status',c:'status'},{l:'Audit Workspace',c:'audit-workspace'},{l:'Agent Instructions',c:'intent'},{l:'Exit',c:'exit'}];
 
@@ -310,15 +291,13 @@ if (cmd === 'intent') {
 // ── lbe remove ──
 if (cmd === 'remove') {
   const pp = path.join(cwd, '.lbe', 'policy.json');
-  if (!fs.existsSync(pp)) { process.stdout.write('NO_BOUNDARY_FOUND
-'); process.exit(0); }
+  if (!fs.existsSync(pp)) { process.stdout.write('NO_BOUNDARY_FOUND\n'); process.exit(0); }
   try { fs.unlinkSync(pp); } catch (_) {}
   const ap = path.join(cwd, '.lbe', 'audit.jsonl');
   try { fs.unlinkSync(ap); } catch (_) {}
   const wp = path.join(cwd, '.lbe', 'workspace.json');
   try { fs.unlinkSync(wp); } catch (_) {}
-  process.stdout.write('BOUNDARY_REMOVED
-');
+  process.stdout.write('BOUNDARY_REMOVED\n');
   process.exit(0);
 }
 
