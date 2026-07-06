@@ -13,7 +13,7 @@
 ![GitHub Actions](https://github.com/Letterblack0306/LetterBlack-Sentinel/actions/workflows/public-validate.yml/badge.svg)
 
 <p align="center">
-  <strong>Local-first · Terminal-first · SDK + CLI · Scope-aware proof</strong><br>
+  <strong>Local-first Â· Terminal-first Â· SDK + CLI Â· Scope-aware proof</strong><br>
   Local execution boundary for AI agents.
 </p>
 
@@ -27,7 +27,7 @@ That works while agents are weak.
 
 But agents already write files, run shell commands, control browsers, edit configs, and trigger workflows. Soon they will touch publishing, databases, deployments, credentials, and production systems.
 
-At that point, “the agent meant well” is not enough.
+At that point, â€œthe agent meant wellâ€ is not enough.
 
 LBE exists for the moment between an AI agent deciding what to do and the system actually doing it.
 
@@ -52,9 +52,9 @@ LBE is the local execution-control layer for AI agents before they touch real sy
 
 <p align="center">
   <a href="#install-first-then-start-simple"><strong>Get started</strong></a>
-  ·
+  Â·
   <a href="#common-commands"><strong>See commands</strong></a>
-  ·
+  Â·
   <a href="#technical-visuals"><strong>Technical visuals</strong></a>
 </p>
 
@@ -148,7 +148,7 @@ For detailed request-flow visuals showing an allowed request and a denied reques
 
 ## Visual infographics
 
-These graphs are illustrative, not performance benchmarks. They explain what value LBE adds to agent workflows.
+These examples are illustrative, not performance benchmarks. They explain what value LBE adds to agent workflows.
 
 | Capability | What LBE adds |
 |---|---|
@@ -157,7 +157,6 @@ These graphs are illustrative, not performance benchmarks. They explain what val
 | Proof readiness | Shows whether evidence is complete |
 | Host decision support | Returns allow/deny/status result for routed actions |
 | Global hard blocking | Requires a stricter execution bridge for all tool paths |
-| Global hard blocking | 40% |
 
 Note: hard blocking for all tool paths requires a stricter execution bridge.
 
