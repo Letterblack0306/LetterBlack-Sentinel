@@ -50,6 +50,8 @@ LBE is the local execution-control layer for AI agents before they touch real sy
   </tr>
 </table>
 
+> This repository is the public release mirror. Release/build authority lives in LetterBlack-LBE-Core.
+
 <p align="center">
   <a href="#install-first-then-start-simple"><strong>Get started</strong></a>
   ·
@@ -257,11 +259,3 @@ LBE is not a sandbox, container, or OS-level isolation layer. It controls only t
 - Does not provide public hosted shell execution
 - Does not provide public hosted filesystem mutation
 - Does not make LBE Cloud the owner of your workspace or execution path
-
-If an agent writes directly to the filesystem without going through your host/LBE boundary, LBE does not see that action.
-
-LBE governs actions explicitly routed through the LBE boundary.
-
-## License
-
-Proprietary. See `LICENSE` for details.
