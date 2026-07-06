@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="#quick-start">Quick Start</a> ·
+  <a href="#install-once-use-per-workspace">Install Once</a> ·
   <a href="#important-package-name-vs-command-name">npx Fix</a> ·
   <a href="#what-lbe-does">What It Does</a> ·
   <a href="#how-it-works">How It Works</a> ·
@@ -18,7 +19,71 @@
 
 LBE is a local safety boundary for AI agents. It checks agent-generated file and command actions before your host environment executes them.
 
-The package name is **scoped**:
+### 1. Install LBE once globally
+
+```bash
+npm install -g @letterblack/lbe-core
+```
+
+This installs the `lbe` command on your system.
+
+### 2. Open any project workspace
+
+```bash
+cd your-project
+lbe
+```
+
+You should see the **LetterBlack Sentinel** terminal menu.
+
+### 3. Apply LBE to that workspace
+
+Choose **Apply Boundary**.
+
+This creates LBE state for the current project only:
+
+```text
+lbe.policy.json
+.lbe/
+```
+
+Then choose **Agent Instructions** to define what the AI agent is allowed to do in that workspace.
+
+Current release: `@letterblack/lbe-core@1.3.40` · Requires Node.js `>=20.9.0` · Zero external dependencies.
+
+## Install Once, Use Per Workspace
+
+LBE has two separate concepts:
+
+| Concept | What it means |
+|---|---|
+| **Installation** | Install the `lbe` command once on your computer |
+| **Workspace boundary** | Apply LBE separately inside each project folder |
+
+You do **not** install LBE again for every project.
+
+Correct daily use:
+
+```bash
+# one time only
+npm install -g @letterblack/lbe-core
+
+# project A
+cd path/to/project-a
+lbe
+
+# project B
+cd path/to/project-b
+lbe
+```
+
+Each project gets its own local boundary, policy, task instructions, and audit state. The global `lbe` command is only the tool used to manage those workspaces.
+
+Use a local project install only when you specifically need a pinned per-project version for CI or a reproducible test fixture.
+
+## Important: package name vs command name
+
+The package name is:
 
 ```bash
 @letterblack/lbe-core
@@ -30,33 +95,7 @@ The command it installs is:
 lbe
 ```
 
-### Option A — Use once without installing
-
-Use this when you are testing LBE in any folder:
-
-```bash
-cd your-project
-npx --package @letterblack/lbe-core lbe
-```
-
-### Option B — Install in your project
-
-Use this when you want the project to keep using LBE:
-
-```bash
-cd your-project
-npm init -y
-npm install -D @letterblack/lbe-core
-npx lbe
-```
-
-You should see the **LetterBlack Sentinel** terminal menu.
-
-Current release: `@letterblack/lbe-core@1.3.40` · Requires Node.js `>=20.9.0` · Zero external dependencies.
-
-## Important: package name vs command name
-
-Do **not** assume this command always runs LetterBlack Sentinel:
+Do **not** use this as the main install path:
 
 ```bash
 npx lbe
@@ -64,39 +103,35 @@ npx lbe
 
 `npx lbe` means: "download and run the npm package named `lbe`." That package name is not this project.
 
-This project is named:
-
-```bash
-@letterblack/lbe-core
-```
-
-So the reliable no-install command is:
+If you want to test LBE without installing it globally, use the scoped package explicitly:
 
 ```bash
 npx --package @letterblack/lbe-core lbe
 ```
 
-After you install `@letterblack/lbe-core` locally in a project, then this is correct:
+But the recommended normal workflow is still:
 
 ```bash
-npx lbe
+npm install -g @letterblack/lbe-core
+cd your-project
+lbe
 ```
 
 ### If you see the wrong menu
 
 If `npx lbe` shows commands such as `configure` or `email`, you are running a different package.
 
-Use:
+Fix it by installing the correct package globally:
+
+```bash
+npm install -g @letterblack/lbe-core
+lbe
+```
+
+or run the scoped no-install command:
 
 ```bash
 npx --package @letterblack/lbe-core lbe
-```
-
-or install the correct package locally:
-
-```bash
-npm install -D @letterblack/lbe-core
-npx lbe
 ```
 
 ## What LBE Does
@@ -151,7 +186,7 @@ LBE only protects paths and actions that are routed through it. If an agent bypa
 
 ```bash
 cd your-project
-npx --package @letterblack/lbe-core lbe
+lbe
 ```
 
 Choose **Apply Boundary**.
@@ -163,7 +198,7 @@ This creates local LBE workspace state and starts in observe mode. The menu stay
 From the menu, choose **Agent Instructions**, or run the direct command:
 
 ```bash
-npx --package @letterblack/lbe-core lbe instructions
+lbe instructions
 ```
 
 You will be asked for:
@@ -176,25 +211,25 @@ You will be asked for:
 ### 3. Check status
 
 ```bash
-npx --package @letterblack/lbe-core lbe status
+lbe status
 ```
 
 ### 4. Audit the workspace
 
 ```bash
-npx --package @letterblack/lbe-core lbe audit-workspace
+lbe audit-workspace
 ```
 
 ### 5. Switch enforcement mode when ready
 
 ```bash
-npx --package @letterblack/lbe-core lbe enforce
+lbe enforce
 ```
 
 Use observe mode again with:
 
 ```bash
-npx --package @letterblack/lbe-core lbe observe
+lbe observe
 ```
 
 ## Commands
@@ -217,7 +252,15 @@ The CLI supports both the interactive menu and direct commands.
 | `lbe execute` | Evaluates JSON input through the execution decision core |
 | `lbe help` | Shows CLI help |
 
-When using without a local install, prefix commands like this:
+After global install, commands are used directly:
+
+```bash
+lbe status
+lbe audit-workspace
+lbe enforce
+```
+
+For one-off testing without global install, prefix with the scoped package:
 
 ```bash
 npx --package @letterblack/lbe-core lbe status
@@ -225,26 +268,13 @@ npx --package @letterblack/lbe-core lbe audit-workspace
 npx --package @letterblack/lbe-core lbe enforce
 ```
 
-When installed locally, this is enough:
-
-```bash
-npx lbe status
-npx lbe audit-workspace
-npx lbe enforce
-```
-
 ## Terminal Menu Guide
 
-Running the correct LBE command with no arguments opens the branded terminal menu:
+Running `lbe` inside a project opens the branded terminal menu:
 
 ```bash
-npx --package @letterblack/lbe-core lbe
-```
-
-If installed locally:
-
-```bash
-npx lbe
+cd your-project
+lbe
 ```
 
 Navigate with the **up/down arrow keys** and press **Enter** to select. Press **q** or `Ctrl+C` to exit.
@@ -325,21 +355,34 @@ It is a local execution governance layer. It validates, audits, and records agen
 
 ## Troubleshooting
 
+### `lbe` is not recognized
+
+Install LBE globally once:
+
+```bash
+npm install -g @letterblack/lbe-core
+```
+
+Then open a project and run:
+
+```bash
+cd your-project
+lbe
+```
+
 ### `npx lbe` shows `configure` and `email`
 
-You are running the wrong npm package. Use:
+You are running the wrong npm package. Use the global install:
+
+```bash
+npm install -g @letterblack/lbe-core
+lbe
+```
+
+or the scoped no-install command:
 
 ```bash
 npx --package @letterblack/lbe-core lbe
-```
-
-### `npx lbe` says command not found
-
-Install the package locally first:
-
-```bash
-npm install -D @letterblack/lbe-core
-npx lbe
 ```
 
 ### The workspace says `not initialised`
@@ -347,14 +390,23 @@ npx lbe
 Run:
 
 ```bash
-npx --package @letterblack/lbe-core lbe init
+lbe init
 ```
 
 or open the menu and choose **Apply Boundary**.
 
 ### I want to use this in CI or automation
 
-Use direct commands instead of the interactive menu:
+For CI, either install globally in the job or use the scoped no-install command:
+
+```bash
+npm install -g @letterblack/lbe-core
+lbe status
+lbe audit-workspace
+lbe proof
+```
+
+or:
 
 ```bash
 npx --package @letterblack/lbe-core lbe status
