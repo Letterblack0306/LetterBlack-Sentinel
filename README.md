@@ -245,7 +245,7 @@ The README must show the primary visual directly. Deeper reviewer context may li
 | Public banner | `assets/banner.png` | Product identity |
 | Runtime boundary | `assets/runtime-boundary.svg` | Shows host-routed validation before execution |
 
-See [Technical Visuals](docs/TECHNICAL_VISUALS.md) for extended diagrams and reviewer notes.
+See [extended reviewer notes](docs/TECHNICAL_VISUALS.md) for deeper diagrams and reviewer context.
 
 ## What LBE does not do
 
