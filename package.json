@@ -25,7 +25,9 @@
   ],
   "scripts": {
     "pack": "npm pack",
-    "pack:check": "npm pack --dry-run"
+    "pack:check": "npm pack --dry-run",
+    "validate:readme-governance": "node scripts/validate-readme-governance.mjs",
+    "validate:public": "npm run validate:readme-governance && npm run pack:check"
   },
   "keywords": [
     "ai-governance",
