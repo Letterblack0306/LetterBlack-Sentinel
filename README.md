@@ -106,7 +106,7 @@ AI agents can write files, run commands, edit configuration, and trigger workflo
 LBE helps you:
 
 - **Apply a workspace boundary** before agent work begins.
-- **Record agent intent** so the task has a clear scope.
+- **Save agent instructions** so the task has a clear scope.
 - **Check status** before and after an agent session.
 - **Audit workspace activity** so actions are visible.
 - **Evaluate execution requests** and return allowed/denied results.
@@ -156,14 +156,14 @@ npx --package @letterblack/lbe-core lbe
 
 Choose **Apply Boundary**.
 
-This creates local LBE workspace state and starts in observe mode.
+This creates local LBE workspace state and starts in observe mode. The menu stays open after the action so you can continue setup.
 
 ### 2. Add agent instructions
 
-Open the menu again and choose **Agent Instructions**, or run:
+From the menu, choose **Agent Instructions**, or run the direct command:
 
 ```bash
-npx --package @letterblack/lbe-core lbe intent
+npx --package @letterblack/lbe-core lbe instructions
 ```
 
 You will be asked for:
@@ -211,7 +211,7 @@ The CLI supports both the interactive menu and direct commands.
 | `lbe enforce` | Sets mode to enforcement/blocking mode |
 | `lbe policy` | Prints current policy mode and rules |
 | `lbe scope` | Prints registered task scope if one exists |
-| `lbe intent` | Opens or prints agent instruction/intent state |
+| `lbe instructions` | Opens or prints saved agent instructions |
 | `lbe audit-workspace` | Runs a workspace audit |
 | `lbe proof` | Prints latest proof status if available |
 | `lbe execute` | Evaluates JSON input through the execution decision core |
@@ -255,8 +255,8 @@ Local Execution Governance
 
 Workspace : your-project
 Status    : observe / enforce / not initialised
-Scope     : registered / not found
-Intent    : number of entries
+Task      : registered / not found
+Activity  : saved task count / none
 Proof     : available / not found
 Execution : local only
 
@@ -281,7 +281,7 @@ lbe.policy.json
 .lbe/
 ```
 
-New workspaces start in observe mode so you can inspect behavior before enforcing blocks.
+New workspaces start in observe mode so you can inspect behavior before enforcing blocks. In the interactive menu, LBE returns to the menu after setup instead of closing.
 
 ### Remove Boundary
 
@@ -291,7 +291,7 @@ Use this when cleaning a test project or removing LBE from a workspace.
 
 ### Check Status
 
-Shows mode, rule count, scope state, intent state, proof state, and audit state.
+Shows mode, rule count, task state, proof state, and audit state.
 
 ### Audit Workspace
 
