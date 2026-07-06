@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// @letterblack/lbe-core v1.3.37
+// @letterblack/lbe-core v1.3.39
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
@@ -53,31 +53,81 @@ const CK='\x1b[38;2;80;200;120m',YE='\x1b[38;2;240;200;60m',CY='\x1b[38;2;100;20
 function out(t=''){process.stdout.write(String(t));}
 function line(t=''){process.stdout.write(String(t)+'\n');}
 
-function logoLines(){
-  const br=[' ┌──┐ ',' │  │ ',' │  │ ',' └──┘ '];
-  return br.map(b=>'  '+W+b+N+'  '+RB+'   '+N+'  '+W+b+N);
+function renderChar(ch){
+  if(ch==='#')return RB+' '+N;
+  if(ch==='*')return W+'█'+N;
+  if(ch===' ')return ' ';
+  return DI+ch+N;
 }
+const LOGO=[
+  '  _____________________________________________________________ ',
+  ' |                                                             |',
+  ' |      ###############################################        |',
+  ' |      ##                                       *****##        |',
+  ' |      ##  ******  ####  *******                *****##        |',
+  ' |      ##  **  **  ####  **   **                *****##        |',
+  ' |      ##  ******  ####  *******                *****##        |',
+  ' |      ##  **  **  ####  **   **                *****##        |',
+  ' |      ##  ******  ####  *******                *****##        |',
+  ' |      ##                                       *****##        |',
+  ' |      ###############################################        |',
+  ' |                                                             |',
+  ' |_____________________________________________________________|',
+];
+function logoLines(){return LOGO.map(l=>[...l].map(renderChar).join(''));}
 
 function showHeader(){
   const ll=logoLines();
-  const tb=W+'\u2554'+'\u2550'.repeat(66)+'\u2557'+N;
-  const bb=W+'\u255A'+'\u2550'.repeat(66)+'\u255D'+N;
-  const bl=W+'\u2551'+N+' '.repeat(66)+W+'\u2551'+N;
-  const tl=W+'\u2551'+N+ll[0]+'  '+B+W+'LetterBlack Sentinel'+N+' '.repeat(24)+W+'\u2551'+N;
-  const ta=W+'\u2551'+N+ll[1]+'  '+W+'Local Execution Governance'+N+' '.repeat(20)+W+'\u2551'+N;
-  const tv=W+'\u2551'+N+ll[2]+'  '+DI+'v1.3.37'+N+' '.repeat(22)+W+'\u2551'+N;
-  out(CL);[tb,bl,tl,ta,tv,bl,bb].forEach(l=>{out('  '+l+'\n');});
+  const w=66;
+  const tb=W+'╔'+'═'.repeat(w)+'╗'+N;
+  const bb=W+'╚'+'═'.repeat(w)+'╝'+N;
+  const bl=W+'║'+N+' '.repeat(w)+W+'║'+N;
+  out(CL);
+  out('  '+tb+'
+');
+  out('  '+bl+'
+');
+  for(const l of ll){
+    const plain=l.replace(/[[0-9;]*m/g,'');
+    const pad=plain.length<w?l+' '.repeat(w-plain.length):plain.slice(0,w);
+    out('  '+W+'║'+N+pad+W+'║'+N+'
+');
+  }
+  out('  '+bl+'
+');
+  const title=B+W+'LetterBlack Sentinel'+N;
+  out('  '+W+'║'+N+'  '+title+' '.repeat(w-2-20)+W+'║'+N+'
+');
+  const tag=W+'Local Execution Governance'+N;
+  out('  '+W+'║'+N+'  '+tag+' '.repeat(w-2-27)+W+'║'+N+'
+');
+  const vt='v'+publicPackageVersion;
+  out('  '+W+'║'+N+'  '+DI+vt+N+' '.repeat(w-2-2-vt.length)+W+'║'+N+'
+');
+  out('  '+bl+'
+');
+  out('  '+bb+'
+');
   const policy=readPolicy();
-  out('\n  '+G+'Workspace :'+N+' '+cwd+'\n');
-  out('  '+G+'Status    :'+N+' '+(policy?.mode==='enforce'?R:YE)+(policy?.mode??'not initialised')+N+'\n');
-  out('  '+G+'Scope     :'+N+' '+(fs.existsSync(scopeFile)?'registered':'not found')+'\n');
-  out('  '+G+'Intent    :'+N+' '+(fs.existsSync(intentLog)?String(readJsonl(intentLog).length)+' entries':'0')+'\n');
-  out('  '+G+'Proof     :'+N+' '+(fs.existsSync(proofFile)?'available':'not found')+'\n');
-  out('  '+G+'Execution :'+N+' local only\n\n');
-  out('  '+G+'Main Menu (Use '+YE+'\u2191 \u2193'+G+' arrows, '+YE+'Enter'+G+' to select)'+N+'\n\n');
-}
+  out('
+  '+G+'Workspace :'+N+' '+cwd+'
+');
+  out('  '+G+'Status    :'+N+' '+(policy?.mode==='enforce'?R:YE)+(policy?.mode??'not initialised')+N+'
+');
+  out('  '+G+'Scope     :'+N+' '+(fs.existsSync(scopeFile)?'registered':'not found')+'
+');
+  out('  '+G+'Intent    :'+N+' '+(fs.existsSync(intentLog)?String(readJsonl(intentLog).length)+' entries':'0')+'
+');
+  out('  '+G+'Proof     :'+N+' '+(fs.existsSync(proofFile)?'available':'not found')+'
+');
+  out('  '+G+'Execution :'+N+' local only
 
-const MENU=[{l:'Apply Boundary',c:'init'},{l:'Remove Boundary',c:'remove'},{l:'Check Status',c:'status'},{l:'Audit Workspace',c:'audit'},{l:'Agent Instructions',c:'intent'},{l:'Exit',c:'exit'}];
+');
+  out('  '+G+'Main Menu (Use '+YE+'↑ ↓'+G+' arrows, '+YE+'Enter'+G+' to select)'+N+'
+
+');
+}
+const MENU=[{l:'Apply Boundary',c:'init'},{l:'Remove Boundary',c:'remove'},{l:'Check Status',c:'status'},{l:'Audit Workspace',c:'audit-workspace'},{l:'Agent Instructions',c:'intent'},{l:'Exit',c:'exit'}];
 
 function showMenu(s){MENU.forEach((m,i)=>{out(i===s?'  '+RB+'\u276f '+m.l+' '.repeat(28-m.l.length)+N+'\n':'    '+G+m.l+' '.repeat(28-m.l.length)+N+'\n');});}
 
@@ -253,6 +303,22 @@ if (cmd === 'intent') {
   line('  ' + CK + '\u2713' + N + ' Instructions saved.  intent_id: ' + intentId + '  scope_id: ' + scopeId);
   if (n > 0) line('  ' + CK + '\u2713' + N + ' Updated ' + n + ' managed block(s)');
   line('');
+  process.exit(0);
+}
+
+
+// ── lbe remove ──
+if (cmd === 'remove') {
+  const pp = path.join(cwd, '.lbe', 'policy.json');
+  if (!fs.existsSync(pp)) { process.stdout.write('NO_BOUNDARY_FOUND
+'); process.exit(0); }
+  try { fs.unlinkSync(pp); } catch (_) {}
+  const ap = path.join(cwd, '.lbe', 'audit.jsonl');
+  try { fs.unlinkSync(ap); } catch (_) {}
+  const wp = path.join(cwd, '.lbe', 'workspace.json');
+  try { fs.unlinkSync(wp); } catch (_) {}
+  process.stdout.write('BOUNDARY_REMOVED
+');
   process.exit(0);
 }
 

@@ -3,14 +3,15 @@
 Package:
 @letterblack/lbe-core
 
-Release artifacts are generated from an internal source repository and validated before they reach the public package surface.
+Private source/build authority:
+Letterblack0306/LetterBlack-LBE-Core
 
-Public repo:
+Public mirror / consumer-facing repo:
 Letterblack0306/LetterBlack-Sentinel
 
 Rules:
-1. Only the internal source repository may publish @letterblack/lbe-core to npm.
-2. Only the internal source repository may create official package GitHub Releases.
+1. Only LetterBlack-LBE-Core may publish @letterblack/lbe-core to npm.
+2. Only LetterBlack-LBE-Core may create official package GitHub Releases.
 3. LetterBlack-Sentinel is public-facing and may validate package contents only.
 4. LetterBlack-Sentinel must not contain workflows that publish npm, create releases, upload release artifacts, or create tags.
 5. Agents must not infer release authority from repository visibility.
