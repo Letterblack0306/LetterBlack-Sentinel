@@ -45,7 +45,7 @@ LBE is the local execution-control layer for AI agents before they touch real sy
       <strong>Beta status</strong><br>
       LBE is currently in public beta. The current public package provides a local SDK and CLI for validating host-routed AI-agent actions, checking scope, and producing local proof/audit evidence.<br><br>
       LBE is terminal-first. Run `npx lbe` after installing the scoped package to open the local terminal menu; direct commands remain available for automation.<br><br>
-      An optional authenticated cloud connection is available for status, workspace connection, and proof/control-plane visibility. Execution remains local. LBE Cloud does not execute shell commands, mutate your filesystem, or provide a shared hosted execution workspace.
+      Execution remains local. The current public package is focused on local SDK and CLI workflows.
     </td>
   </tr>
 </table>
@@ -58,9 +58,9 @@ LBE is the local execution-control layer for AI agents before they touch real sy
   <a href="#technical-visuals"><strong>Technical visuals</strong></a>
 </p>
 
-| Terminal-first | Local policy | Local proof | Optional cloud status |
+| Terminal-first | Local policy | Local proof | Local execution |
 |---|---|---|---|
-| Branded terminal menu | You own the rules | Evidence stays local | Cloud connects, local executes |
+| Branded terminal menu | You own the rules | Evidence stays local | All operations stay on your machine |
 
 ## How LBE fits into an agent workflow
 
@@ -78,7 +78,7 @@ flowchart LR
 
 ## Install first, then start simple
 
-The first thing users need is a clear install step and obvious commands.
+Install the package, then start with the terminal menu or direct CLI commands.
 
 ### Install
 
@@ -113,7 +113,7 @@ Do not rely on bare `npx lbe` before installation; npm may resolve an unrelated 
 
 Sentinel is designed to stay close to the workspace. Running `npx lbe` with no arguments opens a branded terminal menu (TUI) that displays the LBE logo, workspace status, policy mode, proof status, and a numbered action menu.
 
-Users can select actions interactively (initialize, status, logs, proof, verify, observe, enforce, etc.) or use direct commands for repeatable automation. A browser dashboard is not required for the current beta.
+Users can select actions interactively (Apply Boundary, Remove Boundary, Check Status, Audit Workspace, Agent Instructions, Exit) or use direct commands for repeatable automation. Observe and enforce modes are available as direct CLI commands, not menu actions.
 
 ## Why LBE exists
 
@@ -148,13 +148,13 @@ This is the visual narrative of how LBE fits into a real workflow.
 
 These graphs are illustrative, not performance benchmarks. They explain what value LBE adds to agent workflows.
 
-| Capability | Illustrative strength |
-|---|---:|
-| Task clarity | 92% |
-| Scope visibility | 90% |
-| Proof / audit readiness | 95% |
-| Host decision support | 88% |
-| Global hard blocking | 40% |
+| Capability | What LBE adds |
+|---|---|
+| Task clarity | Declared objective and scope |
+| Scope visibility | Detects changed files outside declared scope |
+| Proof readiness | Shows whether evidence is complete |
+| Host decision support | Returns allow/deny/status result for routed actions |
+| Global hard blocking | Requires a stricter execution bridge for all tool paths |
 
 Note: hard blocking for all tool paths requires a stricter execution bridge.
 
@@ -173,7 +173,7 @@ Note: hard blocking for all tool paths requires a stricter execution bridge.
 
 | Scenario | How LBE helps |
 |---|---|
-| AI coding assistant | Limit the task to `src/**`, require tests, and detect drift if unrelated files were touched. |
+| AI coding assistant | Declare the intended scope as `src/**`, require tests, and detect or report drift if unrelated files changed. |
 | Command review | Use LBE as a decision step before your host executes generated shell commands. |
 | Scope proof | Prove whether final work matched the approved objective instead of trusting the final message. |
 | New project observation | Start with visibility and proof workflows before moving toward stricter enforcement patterns. |
@@ -187,6 +187,7 @@ Note: hard blocking for all tool paths requires a stricter execution bridge.
 | `npx lbe status` | Show current workspace status and high-level LBE state. |
 | `npx lbe scope` | Inspect or manage scope-related status. |
 | `npx lbe intent` | Inspect or begin the task intent lifecycle. |
+| `npx lbe audit-workspace` | Audit the current workspace for policy and scope issues. |
 | `npx lbe proof` | Show the latest proof result for the workspace. |
 | `npx lbe execute` | Validate a JSON proposal through the LBE boundary. |
 | `npx lbe observe` | Use advisory mode. |
