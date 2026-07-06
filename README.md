@@ -135,6 +135,8 @@ This is the visual narrative of how LBE fits into a real workflow.
 | 4 | Check proof | LBE compares the final state against the declared scope and available validation evidence. |
 | 5 | Return result | Get a readable result such as `CLEAN`, `NO_SCOPE_FOUND`, `CHANGED_OUTSIDE_SCOPE`, or `PROOF_INCOMPLETE`. |
 
+For detailed request-flow visuals showing an allowed request and a denied request, see [Allowed Request Story](docs/TECHNICAL_VISUALS.md#allowed-request-story) and [Denied Request Story](docs/TECHNICAL_VISUALS.md#denied-request-story).
+
 ## Without LBE / With LBE
 
 | Without LBE | With LBE |
@@ -237,7 +239,7 @@ Detailed visuals are kept in technical docs instead of the main README front pag
 
 ## Technical visuals
 
-For deeper reviewer context, see [Technical Visuals](https://github.com/Letterblack0306/LetterBlack-Sentinel/blob/main/docs/TECHNICAL_VISUALS.md).
+For deeper reviewer context, see the full [Technical Visuals](docs/TECHNICAL_VISUALS.md) page (validation gates, allowed request flow, denied request flow).
 
 ## What LBE does not do
 
