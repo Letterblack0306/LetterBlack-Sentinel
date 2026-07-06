@@ -155,6 +155,7 @@ These graphs are illustrative, not performance benchmarks. They explain what val
 | Proof readiness | Shows whether evidence is complete |
 | Host decision support | Returns allow/deny/status result for routed actions |
 | Global hard blocking | Requires a stricter execution bridge for all tool paths |
+| Global hard blocking | 40% |
 
 Note: hard blocking for all tool paths requires a stricter execution bridge.
 
