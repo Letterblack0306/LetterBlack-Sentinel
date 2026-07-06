@@ -127,7 +127,7 @@ function enableRaw(){if(!process.stdin.isTTY)return false;process.stdin.setRawMo
 function disableRaw(){try{process.stdin.setRawMode(false);}catch{}process.stdin.pause();}
 
 async function tuiMenu(){
-  if(!process.stdin.isTTY){showHeader();out(YE+'Open LBE from an interactive terminal with: npx --package @letterblack/lbe-core lbe'+N+'\n');return null;}
+  if(!process.stdin.isTTY){showHeader();out(YE+'Open LBE from an interactive terminal with: lbe'+N+'\n');return null;}
   let sel=0;
   return new Promise(res=>{
     enableRaw();showHeader();showMenu(0);
@@ -155,8 +155,9 @@ function printHelp() {
   out(CL);
   out('  \x1b[38;2;233;233;239m\x1b[1mLBE \x1b[0m\x1b[38;2;233;233;239m— LetterBlack Sentinel\x1b[0m\n');
   out('  \x1b[90mExecution governance for AI agents\x1b[0m\n\n');
-  out('  \x1b[90mInstall:\x1b[0m  npm install -D @letterblack/lbe-core\n');
-  out('  \x1b[90mRun:\x1b[0m     npx --package @letterblack/lbe-core lbe\n\n');
+  out('  \x1b[90mInstall once:\x1b[0m  npm install -g @letterblack/lbe-core\n');
+  out('  \x1b[90mUse per workspace:\x1b[0m  cd your-project && lbe\n');
+  out('  \x1b[90mNo-install test:\x1b[0m  npx --package @letterblack/lbe-core lbe\n\n');
   out('  \x1b[1mMenu options:\x1b[0m\n');
   out('    \x1b[41m Apply Boundary \x1b[0m    Initialize LBE workspace\n');
   out('    Remove Boundary    Clear LBE workspace\n');
