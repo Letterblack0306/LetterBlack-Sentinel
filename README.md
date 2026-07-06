@@ -13,7 +13,7 @@
 ![GitHub Actions](https://github.com/Letterblack0306/LetterBlack-Sentinel/actions/workflows/public-validate.yml/badge.svg)
 
 <p align="center">
-  <strong>Local-first Â· Terminal-first Â· SDK + CLI Â· Scope-aware proof</strong><br>
+  <strong>Local-first · Terminal-first · SDK + CLI · Scope-aware proof</strong><br>
   Local execution boundary for AI agents.
 </p>
 
@@ -27,7 +27,7 @@ That works while agents are weak.
 
 But agents already write files, run shell commands, control browsers, edit configs, and trigger workflows. Soon they will touch publishing, databases, deployments, credentials, and production systems.
 
-At that point, â€œthe agent meant wellâ€ is not enough.
+At that point, "the agent meant well" is not enough.
 
 LBE exists for the moment between an AI agent deciding what to do and the system actually doing it.
 
@@ -44,7 +44,7 @@ LBE is the local execution-control layer for AI agents before they touch real sy
     <td>
       <strong>Beta status</strong><br>
       LBE is currently in public beta. The current public package provides a local SDK and CLI for validating host-routed AI-agent actions, checking scope, and producing local proof/audit evidence.<br><br>
-      LBE is terminal-first. Run `npx lbe` after installing the scoped package to open the local terminal menu; direct commands remain available for automation.<br><br>
+      LBE is terminal-first. Run <code>npx lbe</code> after installing the scoped package to open the local terminal menu; direct commands remain available for automation.<br><br>
       Execution remains local. The current public package is focused on local SDK and CLI workflows.
     </td>
   </tr>
@@ -52,9 +52,9 @@ LBE is the local execution-control layer for AI agents before they touch real sy
 
 <p align="center">
   <a href="#install-first-then-start-simple"><strong>Get started</strong></a>
-  Â·
+  ·
   <a href="#common-commands"><strong>See commands</strong></a>
-  Â·
+  ·
   <a href="#technical-visuals"><strong>Technical visuals</strong></a>
 </p>
 
@@ -65,6 +65,10 @@ LBE is the local execution-control layer for AI agents before they touch real sy
 ## How LBE fits into an agent workflow
 
 A simple public diagram: proposal -> decision -> execution -> evidence.
+
+<p align="center">
+  <img src="assets/runtime-boundary.svg" alt="LBE runtime boundary diagram" width="100%">
+</p>
 
 ```mermaid
 flowchart LR
@@ -134,8 +138,6 @@ This is the visual narrative of how LBE fits into a real workflow.
 | 3 | Agent works | The host or agent performs the work while the task remains scope-bound. |
 | 4 | Check proof | LBE compares the final state against the declared scope and available validation evidence. |
 | 5 | Return result | Get a readable result such as `CLEAN`, `NO_SCOPE_FOUND`, `CHANGED_OUTSIDE_SCOPE`, or `PROOF_INCOMPLETE`. |
-
-For detailed request-flow visuals showing an allowed request and a denied request, see [Allowed Request Story](docs/TECHNICAL_VISUALS.md#allowed-request-story) and [Denied Request Story](docs/TECHNICAL_VISUALS.md#denied-request-story).
 
 ## Without LBE / With LBE
 
@@ -232,13 +234,18 @@ types.d.ts                  TypeScript declarations
 LICENSE
 ```
 
-Detailed visuals are kept in technical docs instead of the main README front page.
-
 <a id="technical-visuals"></a>
 
 ## Technical visuals
 
-For deeper reviewer context, see the full [Technical Visuals](docs/TECHNICAL_VISUALS.md) page (validation gates, allowed request flow, denied request flow).
+The README must show the primary visual directly. Deeper reviewer context may live in technical documentation, but the landing page should not depend on a separate document for core diagrams.
+
+| Visual | Location | Purpose |
+|---|---|---|
+| Public banner | `assets/banner.png` | Product identity |
+| Runtime boundary | `assets/runtime-boundary.svg` | Shows host-routed validation before execution |
+
+See [Technical Visuals](docs/TECHNICAL_VISUALS.md) for extended diagrams and reviewer notes.
 
 ## What LBE does not do
 
@@ -254,3 +261,7 @@ LBE is not a sandbox, container, or OS-level isolation layer. It controls only t
 If an agent writes directly to the filesystem without going through your host/LBE boundary, LBE does not see that action.
 
 LBE governs actions explicitly routed through the LBE boundary.
+
+## License
+
+Proprietary. See `LICENSE` for details.
