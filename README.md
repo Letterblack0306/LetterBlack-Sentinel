@@ -1,201 +1,366 @@
-﻿# LBE Core — Execution Governance for Autonomous AI Agents
+# LBE Core — Local Execution Governance for AI Agents
 
 <p align="center"><img src="assets/banner.png" alt="LBE Core Banner" width="800"></p>
 
 <p align="center">
-  <a href="#why-lbe">Why</a> ·
-  <a href="#what-lbe-does">What</a> ·
-  <a href="#who-it-is-for">Who</a> ·
-  <a href="#how-it-works">How</a> ·
-  <a href="#what-lbe-is-not">Limits</a> ·
-  <a href="#request-flow">Flow</a> ·
-  <a href="#install">Install</a> ·
-  <a href="#terminal-menu-guide">Menu</a>
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#important-package-name-vs-command-name">npx Fix</a> ·
+  <a href="#what-lbe-does">What It Does</a> ·
+  <a href="#how-it-works">How It Works</a> ·
+  <a href="#commands">Commands</a> ·
+  <a href="#terminal-menu-guide">Menu Guide</a> ·
+  <a href="#what-lbe-is-not">Limits</a>
 </p>
 
 ---
 
-### Why LBE?
+## Quick Start
 
-AI agents are powerful. They can write files, run commands, edit configurations, and trigger workflows. But most tools give them unrestricted access — trusting that they will do the right thing.
+LBE is a local safety boundary for AI agents. It checks agent-generated file and command actions before your host environment executes them.
 
-That trust breaks the moment an agent overwrites the wrong file, runs an unexpected command, or drifts outside the task you assigned.
-
-LBE exists for that moment. It sits between the agent and your system — checking every action before it happens.
-
-### What LBE Does
-
-- **Stops unwanted changes.** Before an agent writes a file or runs a command, LBE checks it against the rules you set.
-- **Keeps a record.** Every action is written down so you can review exactly what happened.
-- **Gives a clear answer.** Your application gets a simple yes or no — go ahead, or stop.
-- **Runs on your machine.** No cloud. No accounts. Nothing leaves your computer.
-
-### Who It Is For
-
-| You are... | LBE helps you... |
-|---|---|
-| A developer using AI coding assistants | Set boundaries so the agent only touches files you approve |
-| A platform builder integrating agents | Add a safety check before your system runs agent-generated commands |
-| A team lead managing AI-assisted projects | Review what agents actually did versus what they were asked to do |
-| Anyone running automated workflows | Keep a log of every change, so nothing happens without a trace |
-
-<p align="center"><img src="assets/runtime-boundary.svg" alt="LBE Runtime Boundary"></p>
-
-Current release: `@letterblack/lbe-core@1.3.40` · Node.js >= 20.9.0 · Zero external dependencies
-
-## How It Works
-
-Imagine you have asked an AI agent to work on your project. Before the agent can change a file or run a command, LBE steps in and asks a few simple questions:
-
-- **What is the agent trying to do?** — LBE checks the action before it happens. If the agent wants to write a file or run a command, LBE looks at it first.
-
-- **Is this allowed?** — You decide which files and folders the agent can touch. Everything else is off-limits. The agent stays inside the boundaries you set.
-
-- **What happened?** — Every action gets written down. You can look back and see exactly what the agent did, when it did it, and whether it was allowed or blocked.
-
-- **What should the host do?** — LBE gives your application a clear answer: go ahead, or stop here. No guessing. Your code decides what happens next.
-
-LBE does not change how the agent thinks. It simply makes sure the agent cannot do anything your project has not permitted.
-
-<p align="center"><img src="assets/lbe-gates.png" alt="LBE Validation Gates" width="700"></p>
-
-## What LBE Is Not
-
-LBE does one thing: it checks actions before they happen. It is not:
-
-- A replacement for the AI model itself. LBE does not make the agent smarter or change how it thinks.
-- A code editor or visual dashboard. There is no window to click around in — it works from the terminal.
-- A full system sandbox. It only watches the actions you route through it. It cannot lock down your entire machine.
-- A cloud service. Nothing leaves your computer. There are no accounts, no servers, and no subscriptions.
-
-If an agent finds a way to act without going through LBE, LBE cannot see it. The protection is only as strong as the path you give it.
-
-## Request Flow
-
-### Allowed Request
-
-<p align="center"><img src="assets/story-allow.png" alt="Allowed Request Flow" width="700"></p>
-
-### Denied Request
-
-<p align="center"><img src="assets/story-deny.png" alt="Denied Request Flow" width="700"></p>
-
-## Install
+The package name is **scoped**:
 
 ```bash
-npm install @letterblack/lbe-core
+@letterblack/lbe-core
 ```
 
-Requires Node.js >= 20.9.0.
+The command it installs is:
 
-LBE works per workspace — not system-wide. Each project you want to protect needs its own setup. This gives you the flexibility to have different rules for different projects, and keeps projects fully independent.
+```bash
+lbe
+```
+
+### Option A — Use once without installing
+
+Use this when you are testing LBE in any folder:
 
 ```bash
 cd your-project
+npx --package @letterblack/lbe-core lbe
+```
+
+### Option B — Install in your project
+
+Use this when you want the project to keep using LBE:
+
+```bash
+cd your-project
+npm init -y
+npm install -D @letterblack/lbe-core
 npx lbe
 ```
 
-### Automation & CI/CD Pipelines
+You should see the **LetterBlack Sentinel** terminal menu.
 
-For headless pipelines, automated agents, or strict continuous integration verification, direct command bindings are exposed natively:
+Current release: `@letterblack/lbe-core@1.3.40` · Requires Node.js `>=20.9.0` · Zero external dependencies.
+
+## Important: package name vs command name
+
+Do **not** assume this command always runs LetterBlack Sentinel:
 
 ```bash
-npx lbe init    # Initialize runtime schemas and configuration state
-npx lbe status  # Evaluate current workspace policy compliance
-npx lbe proof   # Export historical local validation payloads
+npx lbe
+```
+
+`npx lbe` means: "download and run the npm package named `lbe`." That package name is not this project.
+
+This project is named:
+
+```bash
+@letterblack/lbe-core
+```
+
+So the reliable no-install command is:
+
+```bash
+npx --package @letterblack/lbe-core lbe
+```
+
+After you install `@letterblack/lbe-core` locally in a project, then this is correct:
+
+```bash
+npx lbe
+```
+
+### If you see the wrong menu
+
+If `npx lbe` shows commands such as `configure` or `email`, you are running a different package.
+
+Use:
+
+```bash
+npx --package @letterblack/lbe-core lbe
+```
+
+or install the correct package locally:
+
+```bash
+npm install -D @letterblack/lbe-core
+npx lbe
+```
+
+## What LBE Does
+
+AI agents can write files, run commands, edit configuration, and trigger workflows. LBE gives those actions a local boundary.
+
+LBE helps you:
+
+- **Apply a workspace boundary** before agent work begins.
+- **Record agent intent** so the task has a clear scope.
+- **Check status** before and after an agent session.
+- **Audit workspace activity** so actions are visible.
+- **Evaluate execution requests** and return allowed/denied results.
+- **Keep everything local.** No cloud account is required.
+
+LBE works per workspace. Each project gets its own local configuration and audit state.
+
+<p align="center"><img src="assets/runtime-boundary.svg" alt="LBE Runtime Boundary"></p>
+
+## Who It Is For
+
+| You are... | LBE helps you... |
+|---|---|
+| A developer using AI coding assistants | Keep agent work inside a defined project boundary |
+| A platform builder integrating agents | Add a local validation step before executing agent actions |
+| A team lead reviewing AI-assisted work | See what was allowed, denied, or recorded |
+| Anyone testing autonomous workflows | Avoid blind execution and keep an audit trail |
+
+## How It Works
+
+LBE does not replace the AI model. It sits between an agent and your local environment.
+
+```text
+Agent proposes an action
+  ↓
+LBE checks workspace policy and task scope
+  ↓
+LBE returns allowed or denied
+  ↓
+Your host executes only if allowed
+  ↓
+LBE keeps local evidence/audit state
+```
+
+LBE only protects paths and actions that are routed through it. If an agent bypasses LBE and directly edits your system, LBE cannot see that action.
+
+<p align="center"><img src="assets/lbe-gates.png" alt="LBE Validation Gates" width="700"></p>
+
+## First Use Workflow
+
+### 1. Open the menu
+
+```bash
+cd your-project
+npx --package @letterblack/lbe-core lbe
+```
+
+Choose **Apply Boundary**.
+
+This creates local LBE workspace state and starts in observe mode.
+
+### 2. Add agent instructions
+
+Open the menu again and choose **Agent Instructions**, or run:
+
+```bash
+npx --package @letterblack/lbe-core lbe intent
+```
+
+You will be asked for:
+
+- the task objective,
+- allowed files/actions,
+- forbidden files/actions,
+- required validations.
+
+### 3. Check status
+
+```bash
+npx --package @letterblack/lbe-core lbe status
+```
+
+### 4. Audit the workspace
+
+```bash
+npx --package @letterblack/lbe-core lbe audit-workspace
+```
+
+### 5. Switch enforcement mode when ready
+
+```bash
+npx --package @letterblack/lbe-core lbe enforce
+```
+
+Use observe mode again with:
+
+```bash
+npx --package @letterblack/lbe-core lbe observe
+```
+
+## Commands
+
+The CLI supports both the interactive menu and direct commands.
+
+| Command | What it does |
+|---|---|
+| `lbe` | Opens the interactive terminal menu |
+| `lbe init` | Applies/initialises the boundary for the current workspace |
+| `lbe remove` | Removes LBE boundary files from the current workspace |
+| `lbe status` | Shows current workspace status |
+| `lbe observe` | Sets mode to observe/log-only |
+| `lbe enforce` | Sets mode to enforcement/blocking mode |
+| `lbe policy` | Prints current policy mode and rules |
+| `lbe scope` | Prints registered task scope if one exists |
+| `lbe intent` | Opens or prints agent instruction/intent state |
+| `lbe audit-workspace` | Runs a workspace audit |
+| `lbe proof` | Prints latest proof status if available |
+| `lbe execute` | Evaluates JSON input through the execution decision core |
+| `lbe help` | Shows CLI help |
+
+When using without a local install, prefix commands like this:
+
+```bash
+npx --package @letterblack/lbe-core lbe status
+npx --package @letterblack/lbe-core lbe audit-workspace
+npx --package @letterblack/lbe-core lbe enforce
+```
+
+When installed locally, this is enough:
+
+```bash
+npx lbe status
+npx lbe audit-workspace
+npx lbe enforce
 ```
 
 ## Terminal Menu Guide
 
-Running `npx lbe` with no arguments opens the branded terminal menu — a keyboard-navigated interface that provides the primary control surface for managing workspace protection.
+Running the correct LBE command with no arguments opens the branded terminal menu:
 
-Navigate using the **up/down arrow keys** and press **Enter** to select. Press **Esc** or **q** to exit at any time.
-
-```
-┌─────────────────────────────────────────────────────┐
-│                                                     │
-│              LetterBlack Sentinel                   │
-│            Local Execution Governance               │
-│                                                     │
-│  ❯ Set Up Protection                                │
-│    Remove Protection                                │
-│    Check Status                                     │
-│    Review Activity                                  │
-│    Task Rules                                       │
-│    Exit                                             │
-│                                                     │
-│  Use arrows, Enter to select, Esc/q to quit         │
-└─────────────────────────────────────────────────────┘
+```bash
+npx --package @letterblack/lbe-core lbe
 ```
 
-### Set Up Protection
+If installed locally:
 
-**What protection does this provide?** AI agents can write files, run commands, and make changes to your project. Without protection, an agent can accidentally overwrite important code, delete configuration, or run a command you never approved. This option puts a safety layer between the agent and your workspace.
+```bash
+npx lbe
+```
 
-When you first run this, LBE starts in Monitor mode — it logs everything the agent does, but does not block anything yet. This lets you see what is happening before you switch to Protect mode.
+Navigate with the **up/down arrow keys** and press **Enter** to select. Press **q** or `Ctrl+C` to exit.
 
-**When to use:** First time setting up LBE in a project. Also use to refresh or repair the local configuration if settings were removed or corrupted.
+```text
+LetterBlack Sentinel
+Local Execution Governance
 
-**What happens:**
-- A local workspace folder is created to hold your rules and activity logs
-- Protection starts in Monitor mode (log only, no blocking)
-- The activity tracking system is prepared
-- The workspace is identified and ready for use
+Workspace : your-project
+Status    : observe / enforce / not initialised
+Scope     : registered / not found
+Intent    : number of entries
+Proof     : available / not found
+Execution : local only
 
-### Remove Protection
+Main Menu
 
-Clears all LBE configuration and activity logs from the current workspace. You will be prompted to confirm before deletion and can choose to preserve the activity history for audit purposes.
+❯ Apply Boundary
+  Remove Boundary
+  Check Status
+  Audit Workspace
+  Agent Instructions
+  Exit
+```
 
-**When to use:** When migrating a project away from LBE, cleaning up a test workspace, or resetting all rules to start fresh.
+### Apply Boundary
 
-**What happens:**
-- Removes local configuration files
-- Clears workspace protection rules
-- Optionally preserves activity history
-- Removes managed references from project files
+Initialises LBE in the current workspace.
+
+Creates local files such as:
+
+```text
+lbe.policy.json
+.lbe/
+```
+
+New workspaces start in observe mode so you can inspect behavior before enforcing blocks.
+
+### Remove Boundary
+
+Removes LBE boundary state from the current workspace.
+
+Use this when cleaning a test project or removing LBE from a workspace.
 
 ### Check Status
 
-Displays a live summary of the current workspace state including whether protection is active, how many rules are configured, and the current operating mode.
+Shows mode, rule count, scope state, intent state, proof state, and audit state.
 
-**When to use:** Regularly during development to verify protection is active. Before running automated pipelines to confirm the workspace is in the expected state.
+### Audit Workspace
 
-**What happens:**
-- Shows whether protection is initialized
-- Displays the current mode (monitor or protect)
-- Reports the number of active rules
-- Shows the latest task result if available
+Runs a local audit and reports whether expected LBE configuration exists.
 
-### Review Activity
+### Agent Instructions
 
-Opens the activity log showing recent operations that passed through the LBE boundary. Each entry includes what action was evaluated, when it occurred, and whether it was allowed or blocked.
+Saves the current task objective and boundaries. This is how you tell LBE what the agent is supposed to do.
 
-**When to use:** After an AI agent completes a task to review what files were modified. When investigating unexpected changes. Before accepting agent-generated work.
+Example inputs:
 
-**What happens:**
-- Displays recent activity entries in chronological order
-- Shows which files were accessed or modified
-- Indicates whether each action was approved or blocked
-- Provides a timestamp for each recorded event
+```text
+Objective: Fix the login form validation bug
+Allowed: src/login, tests/login.test.js
+Forbidden: .env, secrets, node_modules, package-lock.json
+Validations: npm test
+```
 
-### Task Rules
+## What LBE Is Not
 
-Defines the boundaries and requirements for agent tasks in this workspace. Rules are per-project — each workspace can have its own set of allowances and restrictions, independent of other projects on your machine.
+LBE is not:
 
-You can set the objective, specify which files and directories the agent is permitted to touch, list forbidden paths, and declare required validation checks.
+- an AI model,
+- an agent brain,
+- a cloud service,
+- a full operating-system sandbox,
+- a replacement for code review,
+- a guarantee against actions that bypass LBE entirely.
 
-**When to use:** Before starting any AI-assisted development session. When onboarding a new agent to a project. When updating the scope of work for an ongoing task.
+It is a local execution governance layer. It validates, audits, and records agent actions before they reach your host environment.
 
-**What happens:**
-- Prompts for a task objective or goal
-- Accepts a list of allowed file paths or patterns
-- Accepts a list of forbidden file paths or patterns
-- Accepts required validation checks (e.g., tests must pass)
-- Optionally links custom instruction files for agent guidance
+## Troubleshooting
 
-### Exit
+### `npx lbe` shows `configure` and `email`
 
-Closes the terminal menu and returns to the shell prompt. No changes are made.
+You are running the wrong npm package. Use:
+
+```bash
+npx --package @letterblack/lbe-core lbe
+```
+
+### `npx lbe` says command not found
+
+Install the package locally first:
+
+```bash
+npm install -D @letterblack/lbe-core
+npx lbe
+```
+
+### The workspace says `not initialised`
+
+Run:
+
+```bash
+npx --package @letterblack/lbe-core lbe init
+```
+
+or open the menu and choose **Apply Boundary**.
+
+### I want to use this in CI or automation
+
+Use direct commands instead of the interactive menu:
+
+```bash
+npx --package @letterblack/lbe-core lbe status
+npx --package @letterblack/lbe-core lbe audit-workspace
+npx --package @letterblack/lbe-core lbe proof
+```
 
 ---
 
