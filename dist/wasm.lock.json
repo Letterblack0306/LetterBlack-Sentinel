@@ -1,5 +1,5 @@
 {
-  "wasm_sha256": "feb93a2ea76a02584048a588305ba0a192683fd58c1da8f539aeb49b41d0a254",
+  "wasm_sha256": "c6d149caa218aa4db5bb9fca18754555781139997c0ef8bce02aa45d046a6490",
   "entrypoint": "lbe_execute",
   "contract": "execute(input:string)->string"
 }
