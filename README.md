@@ -1,4 +1,4 @@
-﻿# LBE Core — Execution Governance for Autonomous AI Agents
+# LBE Core — Execution Governance for Autonomous AI Agents
 
 <p align="center"><img src="assets/banner.png" alt="LBE Core Banner" width="800"></p>
 
@@ -109,17 +109,31 @@ npx --package @letterblack/lbe-core lbe
 
 ### Automation & CI/CD Pipelines
 
-For headless pipelines, automated agents, or strict continuous integration verification, direct command bindings are exposed natively:
+For headless pipelines, automated agents, or strict continuous integration verification, direct command bindings are available after the global install:
 
 ```bash
-npx lbe init    # Initialize runtime schemas and configuration state
-npx lbe status  # Evaluate current workspace policy compliance
-npx lbe proof   # Export historical local validation payloads
+lbe init    # Initialize runtime schemas and configuration state
+lbe status  # Evaluate current workspace policy compliance
+lbe proof   # Export historical local validation payloads
+```
+
+No-install automation form:
+
+```bash
+npx --package @letterblack/lbe-core lbe init
+npx --package @letterblack/lbe-core lbe status
+npx --package @letterblack/lbe-core lbe proof
 ```
 
 ## Terminal Menu Guide
 
-Running `npx lbe` with no arguments opens the branded terminal menu — a keyboard-navigated interface that provides the primary control surface for managing workspace protection.
+Running `lbe` with no arguments opens the branded terminal menu — a keyboard-navigated interface that provides the primary control surface for managing workspace protection.
+
+For no-install execution, run:
+
+```bash
+npx --package @letterblack/lbe-core lbe
+```
 
 Navigate using the **up/down arrow keys** and press **Enter** to select. Press **Esc** or **q** to exit at any time.
 
