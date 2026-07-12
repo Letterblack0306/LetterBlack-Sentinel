@@ -41,7 +41,7 @@ LBE exists for that moment. It sits between the agent and your system — checki
 
 <p align="center"><img src="assets/runtime-boundary.svg" alt="LBE Runtime Boundary"></p>
 
-Current release: `@letterblack/lbe-core@1.3.41` · Node.js >= 20.9.0 · Zero external dependencies
+Current release: `@letterblack/lbe-core@1.3.42` · Public release available · Node.js >= 20.9.0 · Zero external dependencies
 
 ## How It Works
 
@@ -218,11 +218,3 @@ You can set the objective, specify which files and directories the agent is perm
 - Accepts a list of forbidden file paths or patterns
 - Accepts required validation checks (e.g., tests must pass)
 - Optionally links custom instruction files for agent guidance
-
-### Exit
-
-Closes the terminal menu and returns to the shell prompt. No changes are made.
-
----
-
-LBE Core provides a local execution governance layer that validates, audits, and records AI agent actions before they reach your host environment. It does not replace your AI — it helps you trust what it executes.
