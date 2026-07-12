@@ -10,6 +10,7 @@
   <a href="#what-lbe-is-not">Limits</a> ·
   <a href="#request-flow">Flow</a> ·
   <a href="#install">Install</a> ·
+  <a href="#command-guide">Commands</a> ·
   <a href="#terminal-menu-guide">Menu</a>
 </p>
 
@@ -41,7 +42,7 @@ LBE exists for that moment. It sits between the agent and your system — checki
 
 <p align="center"><img src="assets/runtime-boundary.svg" alt="LBE Runtime Boundary"></p>
 
-Current release: `@letterblack/lbe-core@1.3.42` · Public release available · Node.js >= 20.9.0 · Zero external dependencies
+Current release: `@letterblack/lbe-core@1.3.42` · Public release available · Node.js >= 20.9.0 · Local-first runtime
 
 ## How It Works
 
@@ -82,7 +83,16 @@ If an agent finds a way to act without going through LBE, LBE cannot see it. The
 
 ## Install
 
-### Install LBE once globally
+LBE has two supported ways to run:
+
+| Method | Use this when | Command style |
+|---|---|---|
+| **Global install** | You want to use LBE regularly across local projects | `lbe ...` |
+| **No-install run** | You want to test LBE once without installing it globally | `npx --package @letterblack/lbe-core lbe ...` |
+
+Requires Node.js >= 20.9.0.
+
+### Option 1 — Install once globally
 
 ```bash
 npm install -g @letterblack/lbe-core
@@ -90,9 +100,7 @@ npm install -g @letterblack/lbe-core
 
 This installs the `lbe` command on your system.
 
-Requires Node.js >= 20.9.0.
-
-### Use per workspace
+After global install, move into any project and run:
 
 ```bash
 cd your-project
@@ -101,28 +109,72 @@ lbe
 
 Each project gets its own local boundary, policy, task instructions, and audit state. Do not install LBE again for every project.
 
-### No-install test
+### Option 2 — Run without installing globally
 
 ```bash
 npx --package @letterblack/lbe-core lbe
 ```
 
-### Automation & CI/CD Pipelines
+Use this when you only want to try LBE or run it in a temporary environment.
 
-For headless pipelines, automated agents, or strict continuous integration verification, direct command bindings are available after the global install:
+Do **not** use bare `npx lbe`. That can resolve to an unrelated npm package. Always use the scoped package form shown above.
+
+## Command Guide
+
+Use this section to choose the right command. The commands are small on purpose: each one answers a different question.
+
+| Command | What it does | When to use it |
+|---|---|---|
+| `lbe` | Opens the interactive terminal menu | First-time setup, normal local use, reviewing protection from the menu |
+| `lbe init` | Initializes LBE state for the current workspace | Headless setup, automation, CI, or when you want setup without the menu |
+| `lbe status` | Shows the current workspace state and policy/proof status | Before or after running an agent; before accepting generated changes |
+| `lbe proof` | Prints the latest local proof/audit result | After an agent task or validation run, when you need evidence of what happened |
+
+### Global-install commands
+
+Use these after running `npm install -g @letterblack/lbe-core`:
 
 ```bash
-lbe init    # Initialize runtime schemas and configuration state
-lbe status  # Evaluate current workspace policy compliance
-lbe proof   # Export historical local validation payloads
+lbe         # Open the interactive terminal menu
+lbe init    # Initialize runtime schemas and workspace state
+lbe status  # Check current workspace governance status
+lbe proof   # Show the latest proof/audit result
 ```
 
-No-install automation form:
+### No-install equivalents
+
+Use these when you do not want a global install:
 
 ```bash
+npx --package @letterblack/lbe-core lbe
 npx --package @letterblack/lbe-core lbe init
 npx --package @letterblack/lbe-core lbe status
 npx --package @letterblack/lbe-core lbe proof
+```
+
+### Common flow
+
+For a normal local project:
+
+```bash
+cd your-project
+lbe
+```
+
+For automation or CI:
+
+```bash
+cd your-project
+lbe init
+lbe status
+lbe proof
+```
+
+For a no-install test:
+
+```bash
+cd your-project
+npx --package @letterblack/lbe-core lbe
 ```
 
 ## Terminal Menu Guide
