@@ -14,24 +14,29 @@ jobs:
     name: Test and Validate Package
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: ['20.9.0', '22']
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact commit without marketplace actions
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          AUTH=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c http.extraheader="AUTHORIZATION: basic $AUTH" fetch --depth=1 origin "$GITHUB_SHA"
+          git checkout --detach FETCH_HEAD
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Validate package metadata
+      - name: Validate runner and package metadata
         shell: bash
         run: |
           set -euo pipefail
+          node --version
+          npm --version
           node -e "
+            const [major, minor] = process.versions.node.split('.').map(Number);
+            if (major < 20 || (major === 20 && minor < 9)) throw new Error('Node >=20.9.0 required');
             const pkg = require('./package.json');
             if (pkg.name !== '@letterblack/lbe-core') throw new Error('Package name mismatch');
             if (pkg.main !== 'dist/index.js') throw new Error('Public main must be dist/index.js');
