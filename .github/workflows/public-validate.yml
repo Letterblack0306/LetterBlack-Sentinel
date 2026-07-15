@@ -1,4 +1,4 @@
-name: Public Mirror Validation
+name: Public Package Validation
 
 on:
   push:
@@ -6,17 +6,26 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   validate:
-    name: Validate Package Shape
+    name: Test and Validate Package
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['20.9.0', '22']
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node-version }}
 
       - name: Validate package metadata
         shell: bash
@@ -27,8 +36,23 @@ jobs:
             if (pkg.name !== '@letterblack/lbe-core') throw new Error('Package name mismatch');
             if (pkg.main !== 'dist/index.js') throw new Error('Public main must be dist/index.js');
             if (pkg.bin.lbe !== 'dist/cli.js') throw new Error('Public bin must be dist/cli.js');
-            if (pkg.files && pkg.files.includes('.github/')) throw new Error('.github/ must not appear in npm files field');
+            if (!pkg.scripts?.test) throw new Error('Public package must define tests');
+            if (pkg.files?.includes('.github/')) throw new Error('.github/ must not appear in npm files field');
           "
+
+      - name: Run SDK tests
+        run: npm test
+
+      - name: CLI smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          TMP_DIR=$(mktemp -d)
+          cd "$TMP_DIR"
+          node "$GITHUB_WORKSPACE/dist/cli.js" init
+          node "$GITHUB_WORKSPACE/dist/cli.js" status | grep -q "runtime:  ok"
+          node "$GITHUB_WORKSPACE/dist/cli.js" observe
+          node "$GITHUB_WORKSPACE/dist/cli.js" enforce
 
       - name: Dry-run pack and check contents
         shell: bash
@@ -37,16 +61,16 @@ jobs:
           PACK_JSON=$(npm pack --dry-run --json 2>/dev/null)
           echo "$PACK_JSON"
 
-          # Required files
-          echo "$PACK_JSON" | grep -q "dist/index.js" || (echo "Missing dist/index.js"; exit 1)
-          echo "$PACK_JSON" | grep -q "dist/cli.js" || (echo "Missing dist/cli.js"; exit 1)
+          for required in dist/index.js dist/cli.js dist/lbe_engine.wasm dist/wasm.lock.json types.d.ts README.md SECURITY.md LICENSE; do
+            echo "$PACK_JSON" | grep -q "\"$required\"" || (echo "Missing $required"; exit 1)
+          done
 
-          # Forbidden paths in npm pack
-          FORBIDDEN=".env keys/ tests/ src/ scripts/ .github/ release-public/ package-lock.json"
-          for p in $FORBIDDEN; do
-            if echo "$PACK_JSON" | grep -q "\"$p"; then
-              echo "HARD STOP: forbidden path in npm pack: $p"
+          FORBIDDEN='.env keys/ tests/ src/ scripts/ .github/ release-public/ package-lock.json'
+          for path in $FORBIDDEN; do
+            if echo "$PACK_JSON" | grep -q "\"$path"; then
+              echo "HARD STOP: forbidden path in npm pack: $path"
               exit 1
             fi
           done
+
           echo "Public validation passed."
