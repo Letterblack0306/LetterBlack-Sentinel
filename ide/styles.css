@@ -1,0 +1,70 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #e8ecf3;
+  background: #0d1117;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #30363d;
+  background: #161b22;
+}
+header div:first-child { display: grid; gap: .2rem; }
+header span, p { color: #9da7b3; }
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.panel {
+  border: 1px solid #30363d;
+  background: #161b22;
+  border-radius: 10px;
+  padding: 1rem;
+}
+.panel:first-child { grid-row: span 2; }
+label { display: block; margin: 1rem 0 .45rem; font-weight: 650; }
+textarea, pre {
+  width: 100%;
+  min-height: 320px;
+  resize: vertical;
+  border: 1px solid #3d444d;
+  border-radius: 8px;
+  padding: .9rem;
+  color: #e8ecf3;
+  background: #0d1117;
+  font: 13px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+  overflow: auto;
+}
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .8rem; }
+button {
+  border: 1px solid #3d444d;
+  border-radius: 7px;
+  padding: .65rem .9rem;
+  color: #fff;
+  background: #238636;
+  cursor: pointer;
+}
+button:nth-child(n+2) { background: #21262d; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button:focus-visible, textarea:focus-visible, pre:focus-visible { outline: 3px solid #58a6ff; outline-offset: 2px; }
+dl { display: grid; gap: .7rem; }
+dl div { display: grid; grid-template-columns: 110px 1fr; gap: .7rem; }
+dt { color: #9da7b3; }
+dd { margin: 0; overflow-wrap: anywhere; }
+.warning { border-color: #9e6a03; }
+@media (prefers-color-scheme: light) {
+  :root { color: #1f2328; background: #f6f8fa; }
+  header, .panel { background: #fff; border-color: #d0d7de; }
+  header span, p, dt { color: #59636e; }
+  textarea, pre { color: #1f2328; background: #f6f8fa; border-color: #afb8c1; }
+}
