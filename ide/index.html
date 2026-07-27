@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'">
+  <title>LBE Builder IDE</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header>
+    <div>
+      <strong>LetterBlack Sentinel</strong>
+      <span>LBE Builder IDE</span>
+    </div>
+    <div id="runtime-status" role="status">Loading runtime…</div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h1>Proposal Simulator</h1>
+      <p>Run a proposal through the same packaged LBE WASM runtime. Nothing is sent to a server.</p>
+      <label for="proposal">Proposal JSON</label>
+      <textarea id="proposal" spellcheck="false">{
+  "action": "write_file",
+  "target": "src/example.js",
+  "reason": "Builder simulation"
+}</textarea>
+      <div class="actions">
+        <button id="run" type="button">Evaluate</button>
+        <button id="format" type="button">Format JSON</button>
+        <button id="export" type="button">Export Result</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Decision</h2>
+      <pre id="result" tabindex="0">No evaluation yet.</pre>
+    </section>
+
+    <section class="panel">
+      <h2>Runtime Inspector</h2>
+      <dl>
+        <div><dt>Execution</dt><dd>Local browser WASM</dd></div>
+        <div><dt>Network</dt><dd>No external provider calls</dd></div>
+        <div><dt>Integrity</dt><dd id="integrity">Pending</dd></div>
+        <div><dt>Hash</dt><dd id="hash">—</dd></div>
+      </dl>
+    </section>
+
+    <section class="panel warning">
+      <h2>AI Integration Boundary</h2>
+      <p>AI assistance is intentionally not embedded in this build. A provider may draft or explain proposals, but LBE remains the deterministic decision layer. Provider keys must never be stored in this static IDE.</p>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
